@@ -6,6 +6,10 @@ export const load = async (event) => {
   if (token) {
     throw redirect(301, "/");
   }
+
+  return {
+    token: "",
+  }
 };
 
 export const actions = {

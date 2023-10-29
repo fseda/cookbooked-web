@@ -6,11 +6,7 @@
   import "@picocss/pico";
 
   export let data;
-
-  $: console.log("token in layout", data.token);
-  $: console.log("is logged in in layout", $isLoggedIn);
-
-  $: isLoggedIn.set(!!data.token);
+  isLoggedIn.set(!!data.token);
 </script>
 
 <Header/>
