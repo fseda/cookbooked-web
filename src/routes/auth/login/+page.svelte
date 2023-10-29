@@ -1,33 +1,61 @@
-<script lang="ts">import { Section, Register } from 'flowbite-svelte-blocks';
-  import { Button, Checkbox, Label, Input } from 'flowbite-svelte';
-	import { PasswordInput } from '$lib/components';
-  </script>
+<script lang="ts">
+	import { enhance } from "$app/forms";
+  import { TextInputField } from "$lib/components";
+	import PasswordInputField from "$lib/components/Forms/PasswordInputField.svelte";
+	import SubmitBtn from "$lib/components/Forms/SubmitBtn.svelte";
+	import { isLoggedIn } from "$lib/stores/user";
+  import { isFieldValid, isPasswordValid } from "$lib/validation/input";
+
+  export let data;
+
+  let login: string = '';
+  let password: string = '';
+
+  $: disableSubmitBtn = !isFieldValid(login) || !isPasswordValid(password);
+
+  isLoggedIn.set(!!data.token);
+</script>
   
-  <Section name="login">
-    <Register href="/">
-      <svelte:fragment slot="top">
-        <img class="w-8 h-8 mr-2" src="/flowbite-logo.svg" alt="logo" />
-        Flowbite
-      </svelte:fragment>
-      <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-        <form class="flex flex-col space-y-6" action="/">
-          <h3 class="text-xl font-medium text-gray-900 dark:text-white p-0">Log into your account</h3>
-          <Label class="space-y-2">
-            <span>Username or email</span>
-            <Input type="text" name="username" placeholder="username or email" required />
-          </Label>
 
-          <PasswordInput />
+<article class="grid">
+  <div>
+    <hgroup>
+      <h1>Log in</h1>
+      <h2>Log in to your account</h2>
+    </hgroup>
+    <form method="post" use:enhance>
+      <TextInputField
+        bind:value={login}
+        name="username"
+        placeholder="Username or email"
+        ariaLabel="Login"
+        autocomplete="username"
+        errorMsg="Invalid Login"
+        validationFunc={isFieldValid}
+        required
+      />
 
-          <div class="flex items-start">
-            <Checkbox>Remember me</Checkbox>
-            <a href="/" class="ml-auto text-sm text-blue-700 hover:underline dark:text-blue-500">Forgot password?</a>
-          </div>
-          <Button type="submit" class="w-full1">Sign in</Button>
-          <p class="text-sm font-light text-gray-500 dark:text-gray-400">
-            Don't have an account yet? <a href="/auth/signup" class="font-medium text-primary-600 hover:underline dark:text-primary-500">Sign up</a>
-          </p>
-        </form>
-      </div>
-    </Register>
-  </Section>
+      <PasswordInputField 
+        style="margin-bottom: 0.2rem;"
+        bind:value={password}
+        name="password"
+        placeholder="Password"
+        ariaLabel="Password"
+        autocomplete="current-password"
+        errorMsg="Invalid Password"
+        validationFunc={isPasswordValid}
+        showForgotPassword={true}
+        required
+      />
+      
+      <SubmitBtn disabled={disableSubmitBtn} text="Login" />
+    </form>
+  </div>
+</article>
+
+<style>
+  article {
+    margin: auto;
+    max-width: 30rem;
+  }
+</style>
