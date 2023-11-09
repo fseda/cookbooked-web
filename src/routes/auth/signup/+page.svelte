@@ -3,14 +3,17 @@
   import { TextInputField, PasswordInputField, SubmitBtn } from "$lib/components";
   import { isEmailValid, isNewPasswordConfirmValid, isNewPasswordValid, isUsernameValid } from "$lib/validation/input";
 	import { isLoggedIn } from "$lib/stores/user";
+	import type { ActionData } from "./$types.js";
 
   export let data;
+  export let form: ActionData;
 
   let username: string = '';
   let email: string = '';
   let password: string = '';
   let passwordConfirm: string = '';
 
+  $: isLoggedIn.set(!!data.token);
   $: disableSubmitBtn = 
     !isUsernameValid(username) || 
     !isEmailValid(email) ||
@@ -23,8 +26,6 @@
       const passMatch = isNewPasswordConfirmValid(password, passwordConfirm);
       field.setAttribute('aria-invalid', `${!passMatch}`);
     };
-
-  isLoggedIn.set(!!data.token);
 </script>
   
 
@@ -35,9 +36,9 @@
       <h2>Create a new account to manage your recipes</h2>
     </hgroup>
     <form method="post" use:enhance>
-      <!-- {#if form?.error}
-        <p class="error">{JSON.stringify(form.error)}</p>
-      {/if} -->
+      {#if form?.error}
+        <small class="error">{form.error.message}</small>
+      {/if}
 
       <TextInputField
         bind:value={username}
@@ -72,7 +73,7 @@
           placeholder="Password"
           ariaLabel="Confirm Password"
           autocomplete="current-password"
-          errorMsg="Invalid Password. Must be at least 4 characters."
+          errorMsg="Invalid Password. Must have at least 4 characters."
           validationFunc={isNewPasswordValid}
           validationDelay={1000}
           required
@@ -101,5 +102,9 @@
   article {
     margin: auto;
     max-width: 30rem;
+  }
+
+  .error {
+    color: red;
   }
 </style>

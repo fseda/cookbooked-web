@@ -1,7 +1,7 @@
 import { API_URL } from '$env/static/private';
-import { redirect } from '@sveltejs/kit';
+import { redirect, type Actions, type ServerLoad } from '@sveltejs/kit';
 
-export const load = async (event) => {
+export const load: ServerLoad = async (event) => {
   const token = event.cookies.get("token");
   if (token) {
     throw redirect(301, "/");
@@ -12,7 +12,7 @@ export const load = async (event) => {
   }
 };
 
-export const actions = {
+export const actions: Actions = {
 	default: async ({ request, cookies }) => {
     const formData = await request.formData();
     const username = formData.get('username');
@@ -26,16 +26,24 @@ export const actions = {
       headers: { 'Content-Type': 'application/json' },
     });
 
+    const resBody = await res.json();
+
+    console.log({
+      status: res.status,
+      body: resBody,
+    })
+
     if (!res.ok) {
       return {
         status: res.status,
-        body: await res.json(),
+        error: resBody,
       }
     }
     
     const token = res.headers.get('Authorization');
     cookies.set('token', token?.split("Bearer ")[1] ?? "", {
       path: '/',
+      httpOnly: true,
     });
 
     throw redirect(303, "/me");

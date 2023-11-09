@@ -6,7 +6,7 @@
   import "@picocss/pico";
 
   export let data;
-  isLoggedIn.set(!!data.token);
+  $: isLoggedIn.set(!!data.token);
 </script>
 
 <Header/>
@@ -15,4 +15,4 @@
   <slot />
 </main>
 
-<Footer/>
+<!-- <Footer/> -->

@@ -5,15 +5,17 @@
 	import SubmitBtn from "$lib/components/Forms/SubmitBtn.svelte";
 	import { isLoggedIn } from "$lib/stores/user";
   import { isFieldValid, isPasswordValid } from "$lib/validation/input";
+	import type { ActionData } from "./$types.js";
 
   export let data;
+  export let form: ActionData;
 
   let login: string = '';
   let password: string = '';
 
   $: disableSubmitBtn = !isFieldValid(login) || !isPasswordValid(password);
 
-  isLoggedIn.set(!!data.token);
+  $: isLoggedIn.set(!!data.token);
 </script>
   
 
@@ -21,7 +23,7 @@
   <div>
     <hgroup>
       <h1>Log in</h1>
-      <h2>Log in to your account</h2>
+      <p>Log in to your account. Or <a href="/auth/signup">sign up</a> if you don't have one.</p>
     </hgroup>
     <form method="post" use:enhance>
       <TextInputField
@@ -30,7 +32,7 @@
         placeholder="Username or email"
         ariaLabel="Login"
         autocomplete="username"
-        errorMsg="Invalid Login"
+        errorMsg="Login is required"
         validationFunc={isFieldValid}
         required
       />
@@ -42,7 +44,7 @@
         placeholder="Password"
         ariaLabel="Password"
         autocomplete="current-password"
-        errorMsg="Invalid Password"
+        errorMsg="Password is required"
         validationFunc={isPasswordValid}
         showForgotPassword={true}
         required
