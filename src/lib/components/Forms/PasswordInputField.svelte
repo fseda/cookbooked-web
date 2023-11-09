@@ -15,6 +15,7 @@
 
   let err = false;
   let timeout: any;
+  let showPassword: boolean = false;
 
   $: justifyContentValue = (() => {
     if (err && showForgotPassword) return 'space-between';
@@ -43,7 +44,8 @@
 </script>
 
 <fieldset>
-  <input type="password"
+  <div class="passwordInput">
+    <input type="password"
     {name}
     {autocomplete}
     {placeholder} 
@@ -54,22 +56,31 @@
     aria-describedby={name + 'Error'}
     style={$$props.style}
     required={required}
-  />
-
-    <div id="passwordInfo" 
-    style:justify-content={justifyContentValue}
-    style:display={showPasswordInfo ? 'flex' : 'none'}
     >
-      {#if err}
-        <small id={name + 'Error'} class="error">{errorMsg}</small>
-      {/if}
-      {#if showForgotPassword}
-        <small id="forgotPassword"><a href="/auth/forgot-password">Forgot password?</a></small>
-      {/if}
-    </div>
+    <label for="showPassword">
+      {showPassword ? 'Hide' : 'Show'}
+      <input type="checkbox" id="showPasswordToggle" name="showPassword" role="switch" bind:checked={showPassword}>
+    </label>
+  </div>
+
+  {#if showPassword}
+    <small id="rawPassword">{value}</small>
+  {/if}
+
+  <div id="passwordInfo" 
+  style:justify-content={justifyContentValue}
+  style:display={showPasswordInfo ? 'flex' : 'none'}
+  >
+    {#if err}
+      <small id={name + 'Error'} class="error">{errorMsg}</small>
+    {/if}
+    {#if showForgotPassword}
+      <small id="forgotPassword"><a href="/auth/forgot-password">Forgot password?</a></small>
+    {/if}
+  </div>
 </fieldset>
 
-<style>
+<style lang="scss">
   .error {
     color: red;
   }
@@ -77,5 +88,23 @@
   #passwordInfo {
     display: flex;
     margin-top: 0.2rem;
+  }
+
+  .passwordInput {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+
+    label {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: right;
+    }
+  }
+
+  #rawPassword {
+    font-size: 0.8rem;
+    color: #999;
   }
 </style>
