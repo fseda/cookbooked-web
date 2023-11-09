@@ -6,22 +6,24 @@
 </script>
 
 <header class="container-fluid">
-  <nav class="container">
+  <nav class="container-fluid">
     <ul>
       <li><a href="/" class="secondary"><strong>👨‍🍳🥩 CookBooked</strong></a></li>
     </ul>
-    <details role="list">
+    <details role="list" dir="rtl">
       <summary aria-haspopup="listbox" role="button" class="outline">&#9776;</summary>
       <ul role="listbox">
         {#if loggedIn}
-          <li><a href="/auth/logout" class="secondary">Logout</a></li>
+          <li><a href="/me" class="secondary">Profile</a></li>
+          <li><a href="/me/recipes" class="secondary">My Recipes</a></li>
+          <li><a href="/auth/logout" class="secondary">Log out</a></li>
         {:else}
-          <li><a href="/auth/login" class="secondary">Login</a></li>
-          <li><a href="/auth/signup" class="secondary">Signup</a></li>
+          <li><a href="/auth/login" class="secondary">Log in</a></li>
+          <li><a href="/auth/signup" class="secondary">Sign up</a></li>
         {/if}
       </ul>
     </details>
-    </nav>
+  </nav>
 </header>
 
 <style>
