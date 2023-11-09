@@ -1,14 +1,15 @@
 <script lang="ts">
   export let disabled: boolean;
-  export let text: string = "Submit";
+  export let loading: boolean = false;
 </script>
 
 <button   
   id="submitBtn"
   type="submit" 
   class="primary outline" 
+  aria-busy={loading} 
   {disabled}
->{text}</button>
+><slot/></button>
 
 <style>
   #submitBtn[disabled] {

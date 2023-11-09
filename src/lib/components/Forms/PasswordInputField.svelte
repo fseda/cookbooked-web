@@ -8,8 +8,7 @@
   export let autocomplete: string;
   export let errorMsg: string;
   export let required: boolean;
-  export let valueConfirm: string = "";
-  export let validationFunc: (value: string) => boolean;;
+  export let validationFunc: (value: string) => boolean;
   export let showForgotPassword: boolean = false;
   export let validationDelay: number = 0;
 
@@ -34,12 +33,6 @@
       err = !validationFunc(field.value);
       field.setAttribute('aria-invalid', `${err}`);
     }, time);
-  };
-
-  function validatePasswordMatch(event: Event) {
-      const field = event.target as HTMLInputElement;
-      const passMatch = isNewPasswordConfirmValid(value, valueConfirm);
-      field.setAttribute('aria-invalid', `${passMatch}`);
   };
 </script>
 

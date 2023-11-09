@@ -9,6 +9,8 @@
 
   export let data;
   export let form: ActionData;
+  
+  let loading = false;
 
   let login: string = '';
   let password: string = '';
@@ -25,7 +27,17 @@
       <h1>Log in</h1>
       <p>Log in to your account. Or <a href="/auth/signup">sign up</a> if you don't have one.</p>
     </hgroup>
-    <form method="post" use:enhance>
+    <form 
+      method="post" use:enhance={() => {
+        loading = true;
+        
+        return async ({ update }) => {
+          // await new Promise(resolve => setTimeout(resolve, 1000));
+          await update();
+          loading = false;
+        }
+      }}
+    >
       <TextInputField
         bind:value={login}
         name="username"
@@ -50,7 +62,10 @@
         required
       />
       
-      <SubmitBtn disabled={disableSubmitBtn} text="Login" />
+      <SubmitBtn 
+        disabled={disableSubmitBtn || loading}
+        {loading}
+      >Login</SubmitBtn>
     </form>
   </div>
 </article>

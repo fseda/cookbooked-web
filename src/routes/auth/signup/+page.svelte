@@ -8,24 +8,18 @@
   export let data;
   export let form: ActionData;
 
-  let username: string = '';
-  let email: string = '';
-  let password: string = '';
-  let passwordConfirm: string = '';
+  let loading = false;
 
-  $: isLoggedIn.set(!!data.token);
+  let username = '';
+  let email = '';
+  let password = '';
+
   $: disableSubmitBtn = 
     !isUsernameValid(username) || 
     !isEmailValid(email) ||
     !isNewPasswordValid(password);
-    //||
-    // !isNewPasswordConfirmValid(password, passwordConfirm);
-
-    function validatePasswordMatch(event: Event) {
-      const field = event.target as HTMLInputElement;
-      const passMatch = isNewPasswordConfirmValid(password, passwordConfirm);
-      field.setAttribute('aria-invalid', `${!passMatch}`);
-    };
+  
+  $: isLoggedIn.set(!!data.token);
 </script>
   
 
@@ -35,7 +29,14 @@
       <h1>Create an account</h1>
       <h2>Create a new account to manage your recipes</h2>
     </hgroup>
-    <form method="post" use:enhance>
+    <form method="post" use:enhance={() => {
+      loading = true;
+      
+      return async ({ update }) => {
+        await update();
+        loading = false;
+      }
+    }}>
       {#if form?.error}
         <small class="error">{form.error.message}</small>
       {/if}
@@ -64,36 +65,23 @@
         required
       />
 
-      <div class="grid">
-        <PasswordInputField 
-          style="margin-bottom: 0.2rem;"
-          bind:value={password}
-          bind:valueConfirm={passwordConfirm}
-          name="password"
-          placeholder="Password"
-          ariaLabel="Confirm Password"
-          autocomplete="current-password"
-          errorMsg="Invalid Password. Must have at least 4 characters."
-          validationFunc={isNewPasswordValid}
-          validationDelay={1000}
-          required
-        />
-
-        <!-- <PasswordInputField 
-          style="margin-bottom: 0.2rem;"
-          bind:value={passwordConfirm}
-          bind:valueConfirm={password}
-          name="password"
-          placeholder="Confirm password"
-          ariaLabel="Confirm password"
-          autocomplete="current-password"
-          errorMsg="Passwords do not match"
-          validationFunc={isNewPasswordValid}
-          required
-        /> -->
-      </div>
+      <PasswordInputField 
+        style="margin-bottom: 0.2rem;"
+        bind:value={password}
+        name="password"
+        placeholder="Password"
+        ariaLabel="Confirm Password"
+        autocomplete="current-password"
+        errorMsg="Invalid Password. Must have at least 4 characters."
+        validationFunc={isNewPasswordValid}
+        validationDelay={1000}
+        required
+      />
       
-      <SubmitBtn disabled={disableSubmitBtn} text="Signup" />
+      <SubmitBtn 
+        disabled={disableSubmitBtn}
+        loading={loading}
+      >Signup</SubmitBtn>
     </form>
   </div>
 </article>
