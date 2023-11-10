@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
-  import { AuthTextInputField, PasswordInputField } from "$lib/components";
+  import { LoginTextInputField, PasswordInputField } from "$lib/components";
 	import SubmitBtn from "$lib/components/forms/SubmitBtn.svelte";
 	import { isLoggedIn } from "$lib/stores/user";
   import { isFieldValid, isPasswordValid } from "$lib/validation/input";
+	import { fly } from "svelte/transition";
 	import type { ActionData } from "./$types.js";
 
   export let data;
@@ -36,7 +37,11 @@
         }
       }}
     >
-      <AuthTextInputField
+      {#if form?.error}
+        <small transition:fly={{ x: -1000, duration: 1000 }} class="error">{form.error.message}</small>
+      {/if}
+      
+      <LoginTextInputField
         bind:value={login}
         name="username"
         placeholder="Username or email"
@@ -72,5 +77,10 @@
   article {
     margin: auto;
     max-width: 30rem;
+  }
+
+  .error {
+    color: red;
+    margin-bottom: 1rem;
   }
 </style>

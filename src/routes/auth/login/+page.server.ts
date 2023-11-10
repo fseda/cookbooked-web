@@ -1,5 +1,5 @@
 import { API_URL } from '$env/static/private';
-import { redirect } from '@sveltejs/kit';
+import { fail, redirect } from '@sveltejs/kit';
 
 export const load = async ({ cookies }) => {
   const token = cookies.get("token");
@@ -44,10 +44,9 @@ export const actions = {
       body: resBody,
     })
     if (!res.ok) {
-      return {
-        status: res.status,
-        body: resBody,
-      }
+      return fail(res.status, {
+        error: resBody,
+      })
     }
     
     const token = res.headers.get('authorization');

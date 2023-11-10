@@ -96,8 +96,8 @@
       />
       
       <SubmitBtn 
-        disabled={disableSubmitBtn}
-        loading={loading}
+        disabled={disableSubmitBtn || loading}
+        {loading}
       >Signup</SubmitBtn>
     </form>
   </div>

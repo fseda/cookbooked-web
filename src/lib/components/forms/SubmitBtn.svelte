@@ -9,7 +9,11 @@
   class="primary outline" 
   aria-busy={loading} 
   {disabled}
-><slot/></button>
+>
+  {#if !loading}
+    <slot/>
+  {/if}
+</button>
 
 <style>
   #submitBtn[disabled] {
