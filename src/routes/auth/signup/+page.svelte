@@ -1,25 +1,34 @@
 <script lang="ts">
   import { enhance } from "$app/forms";
-  import { TextInputField, PasswordInputField, SubmitBtn } from "$lib/components";
+  import { PasswordInputField, SubmitBtn, AuthTextInputField } from "$lib/components";
   import { isEmailValid, isNewPasswordConfirmValid, isNewPasswordValid, isUsernameValid } from "$lib/validation/input";
 	import { isLoggedIn } from "$lib/stores/user";
 	import type { ActionData } from "./$types.js";
+	import { fade, fly } from "svelte/transition";
 
   export let data;
   export let form: ActionData;
 
   let loading = false;
 
-  let username = '';
-  let email = '';
+  let username = form?.username?.toString() ?? '';
+  let email = form?.email?.toString() ?? '';
   let password = '';
+
+  let usernameExists = false;
+  let emailExists = false;
+
+  let usernameErrMsg = 'Invalid Username. Must be at least 3 characters long. And can contain only letters, numbers, underscores, and a dot.';
+  let emailErrMsg = 'Invalid Email';
 
   $: disableSubmitBtn = 
     !isUsernameValid(username) || 
     !isEmailValid(email) ||
-    !isNewPasswordValid(password);
+    !isNewPasswordValid(password) ||
+    usernameExists || emailExists;
   
   $: isLoggedIn.set(!!data.token);
+
 </script>
   
 
@@ -37,33 +46,40 @@
         loading = false;
       }
     }}>
-      {#if form?.error}
-        <small class="error">{form.error.message}</small>
-      {/if}
 
-      <TextInputField
+      <AuthTextInputField
         bind:value={username}
         name="username"
         placeholder="Username"
         ariaLabel="Username"
         autocomplete="username"
-        errorMsg="Invalid Username. Must be at least 3 characters long. And can contain only letters, numbers, underscores, and a dot."
+        errorMsg={usernameErrMsg}
         validationFunc={isUsernameValid}
         validationDelay={1000}
         required
+        disabled={loading}
+        bind:userExists={usernameExists}
       />
+      {#if form?.error.username}
+        <small transition:fly class="error">{form.error.username}</small>
+      {/if}
 
-      <TextInputField
+      <AuthTextInputField
         bind:value={email}
         name="email"
         placeholder="Email"
         ariaLabel="Email"
         autocomplete="email"
-        errorMsg="Invalid Email"
+        errorMsg={emailErrMsg}
         validationFunc={isEmailValid}
         validationDelay={1000}
         required
+        disabled={loading}
+        bind:userExists={emailExists}
       />
+      {#if form?.error.email}
+        <small transition:fly class="error">{form.error.email}</small>
+      {/if}
 
       <PasswordInputField 
         style="margin-bottom: 0.2rem;"
@@ -76,6 +92,7 @@
         validationFunc={isNewPasswordValid}
         validationDelay={1000}
         required
+        disabled={loading}
       />
       
       <SubmitBtn 

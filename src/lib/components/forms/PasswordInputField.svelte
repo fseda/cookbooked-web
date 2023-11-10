@@ -1,16 +1,14 @@
 <script lang="ts">
 	import { isNewPasswordConfirmValid } from "$lib/validation/input";
+	import { blur, fade, fly } from "svelte/transition";
 
   export let value: string;
-  export let name: string;
-  export let placeholder: string;
   export let ariaLabel: string;
-  export let autocomplete: string;
   export let errorMsg: string;
-  export let required: boolean;
   export let validationFunc: (value: string) => boolean;
   export let showForgotPassword: boolean = false;
   export let validationDelay: number = 0;
+  export let disabled = false;
 
   let err = false;
   let timeout: any;
@@ -31,33 +29,40 @@
     timeout = setTimeout(() => {
       const field = event.target as HTMLInputElement;
       err = !validationFunc(field.value);
-      field.setAttribute('aria-invalid', `${err}`);
+      if (err)
+        field.setAttribute('aria-invalid', `${err}`);
+      else 
+        field.removeAttribute('aria-invalid');
     }, time);
   };
 </script>
 
 <fieldset>
   <div class="passwordInput">
-    <input type="password"
-    {name}
-    {autocomplete}
-    {placeholder} 
-    bind:value
-    on:input={validate}
-    on:blur={validate}
-    aria-label={ariaLabel}
-    aria-describedby={name + 'Error'}
-    style={$$props.style}
-    required={required}
-    >
-    <label for="showPassword">
+    <label for="password">
+      Password
+      <input id="password"
+      type="password"
+      name="password"
+      placeholder="Password" 
+      bind:value
+      on:input={validate}
+      on:blur={validate}
+      aria-label={ariaLabel}
+      aria-describedby={'Password Error'}
+      style={$$props.style}
+      required
+      {disabled}
+      >
+    </label>
+    <label id="showPassword" for="showPasswordToggle">
       {showPassword ? 'Hide' : 'Show'}
       <input type="checkbox" id="showPasswordToggle" name="showPassword" role="switch" bind:checked={showPassword}>
     </label>
   </div>
 
   {#if showPassword}
-    <small id="rawPassword">{value}</small>
+    <small transition:fly id="rawPassword">{value}</small>
   {/if}
 
   <div id="passwordInfo" 
@@ -88,7 +93,7 @@
     justify-content: space-between;
     gap: 1rem;
 
-    label {
+    #showPassword {
       display: flex;
       flex-direction: column;
       justify-content: center;

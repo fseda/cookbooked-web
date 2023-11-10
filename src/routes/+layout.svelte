@@ -1,6 +1,6 @@
 <script lang="ts">
-	import Footer from "$lib/components/Layout/Footer.svelte";
-	import Header from "$lib/components/Layout/Header.svelte";
+	import Footer from "$lib/components/layout/Footer.svelte";
+	import Header from "$lib/components/layout/Header.svelte";
 	import { isLoggedIn } from "$lib/stores/user";
   import "../app.css";
   import "@picocss/pico";

@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
-  import { TextInputField } from "$lib/components";
-	import PasswordInputField from "$lib/components/Forms/PasswordInputField.svelte";
-	import SubmitBtn from "$lib/components/Forms/SubmitBtn.svelte";
+  import { AuthTextInputField, PasswordInputField } from "$lib/components";
+	import SubmitBtn from "$lib/components/forms/SubmitBtn.svelte";
 	import { isLoggedIn } from "$lib/stores/user";
   import { isFieldValid, isPasswordValid } from "$lib/validation/input";
 	import type { ActionData } from "./$types.js";
@@ -32,13 +31,12 @@
         loading = true;
         
         return async ({ update }) => {
-          // await new Promise(resolve => setTimeout(resolve, 1000));
           await update();
           loading = false;
         }
       }}
     >
-      <TextInputField
+      <AuthTextInputField
         bind:value={login}
         name="username"
         placeholder="Username or email"

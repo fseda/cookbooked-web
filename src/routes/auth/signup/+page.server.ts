@@ -1,5 +1,5 @@
 import { API_URL } from '$env/static/private';
-import { redirect, type Actions, type ServerLoad } from '@sveltejs/kit';
+import { redirect, type Actions, type ServerLoad, fail } from '@sveltejs/kit';
 
 export const load: ServerLoad = async (event) => {
   const token = event.cookies.get("token");
@@ -19,6 +19,25 @@ export const actions: Actions = {
     const email = formData.get('email');
     const password = formData.get('password');
     const body = JSON.stringify({ username, email, password });
+
+    const usernameExists = (await (
+      await fetch(`${API_URL}/users/exists?username=${username}`)
+    ).json())["exists"];
+
+    const emailExists = (await (
+      await fetch(`${API_URL}/users/exists?email=${email}`)
+    ).json())["exists"];
+    
+    if (usernameExists || emailExists) {
+      return fail(400, {
+        username,
+        email,
+        error: {
+          username: usernameExists ? "username already in use" : "",
+          email: emailExists ? "email already in use" : "",
+        },
+      })
+    }
     
     const res = await fetch(`${API_URL}/auth/signup`, {
       body,
@@ -28,16 +47,12 @@ export const actions: Actions = {
 
     const resBody = await res.json();
 
-    console.log({
-      status: res.status,
-      body: resBody,
-    })
-
     if (!res.ok) {
-      return {
-        status: res.status,
+      return fail(res.status, {
+        username,
+        email,
         error: resBody,
-      }
+      })
     }
     
     const token = res.headers.get('Authorization');
