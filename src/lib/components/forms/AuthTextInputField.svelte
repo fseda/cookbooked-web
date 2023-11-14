@@ -7,11 +7,11 @@
   export let name: string;
   export let placeholder: string;
   export let ariaLabel: string;
-  export let autocomplete: string;
+  // export let autocomplete: string;
   export let errorMsg: string;
   export let required: boolean;
   export let validationFunc: (value: string) => boolean;
-  export let validationDelay: number = 0;
+  export let validationDelay: number = 1000;
   export let disabled: boolean = false;
   export let userExists: boolean = false;
 
@@ -58,7 +58,7 @@
 <input type="text" 
   id={name}
   {name}
-  {autocomplete}
+  autocomplete="off"
   {placeholder} 
   bind:value
   on:input={validate} 
@@ -70,12 +70,16 @@
 />
 
 {#if err}
-  <small id={name + 'Error'} style="color: red;">{errMsg}</small>
+  <small id={name + 'Error'} class="error">{errMsg}</small>
 {/if}
 
 <style>
   label {
     display: flex;
     flex-direction: column;
+  }
+
+  .error {
+    color: red;
   }
 </style>

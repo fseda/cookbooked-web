@@ -52,10 +52,8 @@
         name="username"
         placeholder="Username"
         ariaLabel="Username"
-        autocomplete="username"
         errorMsg={usernameErrMsg}
         validationFunc={isUsernameValid}
-        validationDelay={1000}
         required
         disabled={loading}
         bind:userExists={usernameExists}
@@ -69,10 +67,8 @@
         name="email"
         placeholder="Email"
         ariaLabel="Email"
-        autocomplete="email"
         errorMsg={emailErrMsg}
         validationFunc={isEmailValid}
-        validationDelay={1000}
         required
         disabled={loading}
         bind:userExists={emailExists}
