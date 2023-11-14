@@ -1,4 +1,5 @@
 import { API_URL } from '$env/static/private';
+import { parseToken } from '$lib/auth/jwt';
 import { redirect, type Actions, type ServerLoad, fail } from '@sveltejs/kit';
 
 export const load: ServerLoad = async (event) => {
@@ -56,7 +57,7 @@ export const actions: Actions = {
     }
     
     const token = res.headers.get('Authorization');
-    cookies.set('token', token?.split("Bearer ")[1] ?? "", {
+    cookies.set('token', parseToken(token), {
       path: '/',
       httpOnly: true,
     });

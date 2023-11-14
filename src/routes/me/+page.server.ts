@@ -19,8 +19,11 @@ export const load = async ({ cookies }) => {
     },
   });
 
+  console.log(res.status);
+
   if (res.status === 401) {
-    throw redirect(303, '/auth/login');
+    cookies.delete('token');
+    throw redirect(303, '/auth/login'); 
   }
 
   if (!res.ok) {

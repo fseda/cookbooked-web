@@ -50,6 +50,7 @@
         errorMsg="Login is required"
         validationFunc={isFieldValid}
         required
+        disabled={loading}
       />
 
       <PasswordInputField 
@@ -63,6 +64,7 @@
         validationFunc={isPasswordValid}
         showForgotPassword={true}
         required
+        disabled={loading}
       />
       
       <SubmitBtn 

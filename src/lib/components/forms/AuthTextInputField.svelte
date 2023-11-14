@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { isEmailValid } from "$lib/validation/input";
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   export let value = "";
   export let name: string;
   export let placeholder: string;
@@ -15,44 +17,38 @@
 
   let err = false;
   let errMsg = errorMsg;
-  let timeout1: any;
+  let timeout: any;
   let timeout2: any;
   let label = name[0].toUpperCase() + name.slice(1)
-
-  async function CheckUserExists(event: Event) {
-    clearTimeout(timeout2);
-    if (name === "email") {
-      if (!isEmailValid(value)) {
-        return;
-      }
-    } else if (value.length < 3) return ;
-
-    timeout2 = setTimeout(async () => {
-      const res = await fetch(`http://localhost:3000/users/exists?${name}=${value}`);
-      const data = await res.json();
-      console.log(data)
-      const field = event.target as HTMLInputElement;
-      field.setAttribute('aria-invalid', `${data.exists}`);
-      err = data.exists;
-      userExists = data.exists;
-      errMsg = err ? `${label} already in use` : errMsg;
-    }, validationDelay);
-  };
+  let oldValue = value;
 
   function validate(event: Event) {
-    clearTimeout(timeout1);
+    clearTimeout(timeout);
     let time = event.type === 'blur' ? 0 : validationDelay;
     time = err ? 0 : time;
 
-    timeout1 = setTimeout(() => {
+    timeout = setTimeout(async () => {
       const field = event.target as HTMLInputElement;
       err = !validationFunc(field.value);
+      errMsg = errorMsg;
+
       if (err) {
         field.setAttribute('aria-invalid', `${err}`);
-        errMsg = errorMsg;
+      } else {
+        if (value === oldValue) return;
+
+        oldValue = value;
+
+        const res = await fetch(`${apiUrl}/users/exists?${name}=${value}`);
+        const data = await res.json();
+        const field = event.target as HTMLInputElement;
+
+        field.setAttribute('aria-invalid', `${data.exists}`);
+        
+        err = data.exists;
+        userExists = data.exists;
+        errMsg = err ? `${label} already in use` : errMsg;
       }
-      else 
-        field.removeAttribute('aria-invalid');
     }, time);
   };
 </script>
@@ -66,9 +62,7 @@
   {placeholder} 
   bind:value
   on:input={validate} 
-  on:input={CheckUserExists} 
   on:blur={validate} 
-  on:blur={CheckUserExists} 
   aria-label={ariaLabel}
   aria-describedby={name + 'Error'}
   {required}
@@ -78,7 +72,6 @@
 {#if err}
   <small id={name + 'Error'} style="color: red;">{errMsg}</small>
 {/if}
-
 
 <style>
   label {

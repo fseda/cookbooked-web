@@ -1,4 +1,5 @@
 import { API_URL } from '$env/static/private';
+import { parseToken } from '$lib/auth/jwt.js';
 import { fail, redirect } from '@sveltejs/kit';
 
 export const load = async ({ cookies }) => {
@@ -7,9 +8,7 @@ export const load = async ({ cookies }) => {
     throw redirect(303, "/");
   }
 
-  return {
-    token: "",
-  }
+  return;
 };
 
 type ResBody = {
@@ -49,8 +48,8 @@ export const actions = {
       })
     }
     
-    const token = res.headers.get('authorization');
-    cookies.set('token', token?.split("Bearer ")[1] ?? "", {
+    const token = res.headers.get('Authorization');
+    cookies.set('token', parseToken(token), {
       path: '/',
       httpOnly: true,
     });
