@@ -17,7 +17,7 @@ type ResBody = {
 }
 
 export const actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, cookies, fetch }) => {
     const formData = await request.formData();
     const username = formData.get('username');
     const password = formData.get('password');
@@ -38,10 +38,6 @@ export const actions = {
     });
 
     const resBody: ResBody = await res.json();
-    console.log({
-      status: res.status,
-      body: resBody,
-    })
     if (!res.ok) {
       return fail(res.status, {
         error: resBody,

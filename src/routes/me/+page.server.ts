@@ -7,7 +7,7 @@ type ResponseBody = {
   id: number;
 }
 
-export const load = async ({ cookies }) => {
+export const load = async ({ cookies, fetch }) => {
   const token = cookies.get('token');
   if (!token) {
     throw redirect(303, '/auth/login');
@@ -18,8 +18,6 @@ export const load = async ({ cookies }) => {
       authorization: `Bearer ${token}`,
     },
   });
-
-  console.log(res.status);
 
   if (res.status === 401) {
     cookies.delete('token');

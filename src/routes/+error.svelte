@@ -1,3 +1,6 @@
+<script lang="ts">
+</script>
+
 <div>
   <span>404 - Page not found</span>
   <a href="/">Homepage</a>

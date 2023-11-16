@@ -15,7 +15,7 @@
       <ul role="listbox">
         {#if loggedIn}
           <li><a href="/me" class="secondary">Profile</a></li>
-          <li><a href="/me/recipes" class="secondary">My Recipes</a></li>
+          <li><a href="/recipes" class="secondary">My Recipes</a></li>
           <li><a href="/auth/logout" class="secondary">Log out</a></li>
         {:else}
           <li><a href="/auth/login" class="secondary">Log in</a></li>

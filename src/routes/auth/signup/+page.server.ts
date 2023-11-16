@@ -14,7 +14,7 @@ export const load: ServerLoad = async (event) => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, cookies, fetch }) => {
     const formData = await request.formData();
     const username = formData.get('username');
     const email = formData.get('email');

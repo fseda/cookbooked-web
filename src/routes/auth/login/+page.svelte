@@ -20,7 +20,6 @@
   $: isLoggedIn.set(!!data.token);
 </script>
   
-
 <article class="grid">
   <div>
     <hgroup>
