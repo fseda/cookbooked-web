@@ -1,5 +1,5 @@
 export const load = async ({ cookies }) => {
   return {
-    token: cookies.get("token"),
+    token: !!cookies.get("token"),
   }
 };
