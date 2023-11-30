@@ -1,7 +1,6 @@
 <script lang="ts">
+  import { Modal, TrashIcon, IngredientFields } from '$lib/components';
   import type { Ingredient, RecipeDetails, Unit } from './+page.server';
-	import Modal from '$lib/components/recipes/Modal.svelte';
-	import IngredientFields from '$lib/components/recipes/Ingredient.svelte';
 	import { enhance } from '$app/forms';
 	import { isLoggedIn } from '$lib/stores/user';
   
@@ -30,6 +29,7 @@
     return DOMPurify.sanitize(html);
   }
   const toggleEditModal = (event: Event) => {
+    console.log("edit modal")
     editModal.toggleModal(event);
   }
   
@@ -37,8 +37,9 @@
     deleteModal.toggleModal(event);
   }
 
-  const clearEditRecipe = () => {
+  const clearRecipeEdit = (e: Event) => {
     recipeEdit = cloneDeep(recipe);
+    toggleEditModal(e);
   }
 
   const addIngredient = () => {
@@ -61,7 +62,6 @@
   }
 
   const removeIngredient = (index: number) => {
-    console.log("Removing ingredient")
     recipeEdit.recipe_ingredients = recipeEdit.recipe_ingredients.filter((_, i) => i !== index);
   }
 
@@ -81,8 +81,9 @@
     recipeEdit.recipe_ingredients[index].ingredient_id = recipeEdit.recipe_ingredients[index].ingredient.id;
   }
 
-  const handleSubmitEditRecipeForm = () => {
+  const handleSubmitEditRecipeForm = (e: Event) => {
     editRecipeForm.submit();
+    toggleEditModal(e);
   }
 
   const handleDeleteRecipeForm = () => {
@@ -210,13 +211,14 @@
           {/if}
         {#each recipeEdit.recipe_ingredients as recipeIngredient, index (index)}
           <IngredientFields 
-            bind:recipeIngredient 
+            bind:recipeIngredient
             {units}
             {ingredients}
             {index}
             disabled={loading}
             on:ingredientSelect={(e) => handleIngredientSelect(e, index)}
             on:unitSelect={(e) => handleUnitSelect(e, index)}
+            on:removeIngredient={() => removeIngredient(index)}
           />
         {/each}
         <button 
@@ -235,14 +237,12 @@
       role="button"
       data-target="edit-recipe"
       on:click={handleSubmitEditRecipeForm}
-      on:click={toggleEditModal}
     >Save</a>
     <a href={void(0)} slot="cancel"
       role="button"
       class="outline secondary"
       data-target="edit-recipe"
-      on:click={toggleEditModal}
-      on:click={clearEditRecipe}
+      on:click={clearRecipeEdit}
     >Cancel</a>
   </Modal>
 

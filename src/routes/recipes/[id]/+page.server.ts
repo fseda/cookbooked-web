@@ -109,7 +109,7 @@ export const actions = {
     const link = formData.get('link');
     const recipeIngredients = parseIngredients(formData);
 
-    const recipe = {
+f    const recipe = {
       title,
       description,
       body,
