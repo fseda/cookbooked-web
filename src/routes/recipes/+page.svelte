@@ -14,32 +14,44 @@
     }, 100)
   }
 </script>
-  {#if loading}
-      <div class="container busyBlock" aria-busy="true"></div>
-  {:else if recipes.length === 0}
-    <div class="container">
+{#if loading}
+    <div class="container busy-block" aria-busy="true"></div>
+{:else if recipes.length === 0}
+  <div class="container no-recipes">
+    <section style="text-align: center;">
       <h1>You have no Recipes</h1>
       <p>Click the button below to create your first recipe</p>
-      <a href="/recipes/new" class="button">Create Recipe</a>
-    </div>
-  {:else}
+    </section>
+    <section>
+      <a href="/recipes/new" role="button">New Recipe</a>
+    </section>
+  </div>
+{:else}
+  <section style="display:flex; justify-content: start;">
+    <a href="/recipes/new" role="button" class="outline">New Recipe</a>
+  </section>    
+  <section>
     <div class="grid" transition:fly={{ y: 200, duration: 2000 }}>
       {#each recipes as recipe}
-        <article class="recipeContainer">
-          <a href="/recipes/{recipe.id}">
-            <hgroup>
-              <h4>{recipe.title}</h4>
-              <p>{recipe.description}</p>
-            </hgroup>
-          </a>
-        </article>
+      <article class="recipe-container">
+        <a class="recipe-link" href="/recipes/{recipe.id}">
+          <hgroup>
+            <h4>{recipe.title}</h4>
+            <p>{recipe.description}</p>
+          </hgroup>
+        </a>
+      </article>
       {/each}
     </div>
-  {/if}
+  </section>
+  <section style="display:flex; justify-content: start;">
+    <a href="/recipes/new" role="button" class="outline">New Recipe</a>
+  </section>   
+{/if}
 
 
 <style>
-  .busyBlock {
+  .busy-block {
     width: 100%;
     height: 100%;
     /* background-image: linear-gradient(90deg, #fff, #f2f2f2, #fff); */
@@ -54,13 +66,21 @@
     margin-bottom: 2rem;
   }
 
-  .recipeContainer {
+  .recipe-container {
     padding: 1rem;
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     overflow: hidden;
+  }
+
+  .no-recipes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
   }
 
   hgroup {
@@ -77,7 +97,7 @@
     margin: 0 0 0.5rem 0;
   }
 
-  a {
+  a.recipe-link {
     text-decoration: none;
     color: inherit; 
     display: flex;
@@ -91,7 +111,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 4; /* Number of lines you want to display */
+    -webkit-line-clamp: 4;
     -webkit-box-orient: vertical;
   }
 </style>
