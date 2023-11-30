@@ -2,6 +2,8 @@
 	import { onMount } from "svelte";
   import { modals } from "$lib/stores/modal";
 
+  export let loading = false;
+
   const isOpenClass = "modal-is-open";
   const openingClass = "modal-is-opening";
   const closingClass = "modal-is-closing";
@@ -96,7 +98,6 @@
 
     document.addEventListener("click", handleClickOutside);
     document.addEventListener("keydown", handleEscape);
-    console.log("asdf;aksdjfl;ajsl;fjdlkj")
 
     // Clean up event listeners
     return () => {
@@ -106,7 +107,7 @@
   });
 </script>
 
-<dialog {id} open={isOpen}>
+<dialog {id} open={isOpen} aria-busy={loading}>
   <article>
     <a href="#close"
       aria-label="Close"
@@ -140,3 +141,10 @@
   </article>
 </dialog>
 
+<style>
+  @media (min-width: 1024px) {
+    article {
+      max-width: 80%;
+    }
+  }
+</style>
