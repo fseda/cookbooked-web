@@ -1,4 +1,4 @@
-import { API_URL } from '$env/static/private';
+const VITE_API_URL = import.meta.env.VITE_API_URL;
 import { parseToken } from '$lib/auth/jwt.js';
 import { fail, redirect } from '@sveltejs/kit';
 
@@ -31,7 +31,7 @@ export const actions = {
 
     const body = JSON.stringify({ username, password });
 
-    const res = await fetch(`${API_URL}/auth/login`, {
+    const res = await fetch(`${VITE_API_URL}/auth/login`, {
       body,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

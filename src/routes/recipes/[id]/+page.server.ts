@@ -1,4 +1,4 @@
-import { API_URL } from '$env/static/private';
+const VITE_API_URL = import.meta.env.VITE_API_URL;
 import { error, fail, redirect } from '@sveltejs/kit';
 
 type Category = {
@@ -60,7 +60,7 @@ export const load = async ({ cookies, params, fetch }) => {
 
   if (params.id === 'new') throw redirect(303, '/recipes/new');
 
-  const res = await fetch(`${API_URL}/recipes/${params.id}`, {
+  const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {
     headers: {
       authorization: `Bearer ${token}`,
     },
@@ -79,18 +79,10 @@ export const load = async ({ cookies, params, fetch }) => {
   const resBody: ResponseBody = await res.json();
   const recipe = resBody.recipe;
 
-  const unitResBody = await (await fetch(`${API_URL}/units`)).json();
-  const units: Unit[] = unitResBody.units;
-
-  const ingredientResBody = await (await fetch(`${API_URL}/ingredients`)).json();
-  const ingredients: Ingredient[] = ingredientResBody.ingredients;
-
   return {
     status: res.status,
     body: {
       recipe,
-      units,
-      ingredients,
     },
   }
 }
@@ -116,7 +108,7 @@ export const actions = {
       link: link?.length ?? "".length > 0 ? link : "a ",
     }
 
-    const riRes = await fetch(`${API_URL}/recipes/${params.id}/ingredients`, {
+    const riRes = await fetch(`${VITE_API_URL}/recipes/${params.id}/ingredients`, {
       method: 'PATCH',
       body: JSON.stringify(recipeIngredients),
       headers: {
@@ -138,7 +130,7 @@ export const actions = {
       })
     }
 
-    const res = await fetch(`${API_URL}/recipes/${params.id}`, {
+    const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {
       method: 'PATCH',
       body: JSON.stringify(recipe),
       headers: {
@@ -177,7 +169,7 @@ export const actions = {
       throw redirect(303, '/auth/login');
     }
 
-    const res = await fetch(`${API_URL}/recipes/${params.id}`, {
+    const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {
       method: 'DELETE',
       headers: {
         authorization: `Bearer ${token}`,

@@ -8,6 +8,7 @@
   import { marked } from 'marked';
   import DOMPurify from 'isomorphic-dompurify';
 	import { invalidateAll } from '$app/navigation';
+	import { units as unitsStore, ingredients as ingredientsStore } from '$lib/stores/recipes';
 
   let editModal: Modal;
   let deleteModal: Modal;
@@ -19,8 +20,8 @@
   export let form;
 
   let recipe = data.body?.recipe as RecipeDetails;
-  let units = data.body?.units as Unit[];
-  let ingredients = data.body?.ingredients as Ingredient[];
+  let units = $unitsStore;
+  let ingredients = $ingredientsStore;
 
   $: recipeEdit = form?.body?.recipe ?? cloneDeep(recipe);
 
@@ -61,22 +62,6 @@
 
   const removeIngredient = (index: number) => {
     recipeEdit.recipe_ingredients = recipeEdit.recipe_ingredients.filter((_, i) => i !== index);
-  }
-
-  const handleUnitSelect = (event: CustomEvent, index: number) => {
-    recipeEdit.recipe_ingredients[index].unit = 
-      units.find((unit) => unit.id === parseInt((event.detail.target as HTMLSelectElement).value)) ?? 
-      recipeEdit.recipe_ingredients[index].unit;
-    recipeEdit.recipe_ingredients[index].unit_id = recipeEdit.recipe_ingredients[index].unit.id;
-  }
-
-  const handleIngredientSelect = (event: CustomEvent, index: number) => {
-    recipeEdit.recipe_ingredients[index].ingredient = 
-      ingredients.find((ingredient) => ingredient.id === 
-        parseInt((event.detail.target as HTMLSelectElement).value)) ?? 
-        recipeEdit.recipe_ingredients[index].ingredient;
-
-    recipeEdit.recipe_ingredients[index].ingredient_id = recipeEdit.recipe_ingredients[index].ingredient.id;
   }
 
   const handleSubmitEditRecipeForm = (e: Event) => {

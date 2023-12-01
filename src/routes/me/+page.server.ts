@@ -1,4 +1,4 @@
-import { API_URL } from '$env/static/private';
+const VITE_API_URL = import.meta.env.VITE_API_URL;
 import { redirect } from '@sveltejs/kit';
 
 type ResponseBody = {
@@ -13,7 +13,7 @@ export const load = async ({ cookies, fetch }) => {
     throw redirect(303, '/auth/login');
   }
 
-  const res = await fetch(`${API_URL}/me`, {
+  const res = await fetch(`${VITE_API_URL}/me`, {
     headers: {
       authorization: `Bearer ${token}`,
     },

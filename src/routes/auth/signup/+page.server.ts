@@ -1,6 +1,6 @@
-import { API_URL } from '$env/static/private';
+const VITE_API_URL = import.meta.env.VITE_API_URL;
 import { parseToken } from '$lib/auth/jwt';
-import { redirect, type Actions, type ServerLoad, fail } from '@sveltejs/kit';
+import { fail, redirect, type Actions, type ServerLoad } from '@sveltejs/kit';
 
 export const load: ServerLoad = async (event) => {
   const token = event.cookies.get("token");
@@ -22,11 +22,11 @@ export const actions: Actions = {
     const body = JSON.stringify({ username, email, password });
 
     const usernameExists = (await (
-      await fetch(`${API_URL}/users/exists?username=${username}`)
+      await fetch(`${VITE_API_URL}/users/exists?username=${username}`)
     ).json())["exists"];
 
     const emailExists = (await (
-      await fetch(`${API_URL}/users/exists?email=${email}`)
+      await fetch(`${VITE_API_URL}/users/exists?email=${email}`)
     ).json())["exists"];
     
     if (usernameExists || emailExists) {
@@ -40,7 +40,7 @@ export const actions: Actions = {
       })
     }
     
-    const res = await fetch(`${API_URL}/auth/signup`, {
+    const res = await fetch(`${VITE_API_URL}/auth/signup`, {
       body,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
