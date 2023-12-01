@@ -20,10 +20,10 @@
   export let form;
 
   let recipe = data.body?.recipe as RecipeDetails;
-  // let units = $unitsStore;
-  // let ingredients = $ingredientsStore;
-  let units = data.body?.units as Unit[];
-  let ingredients = data.body?.ingredients as Ingredient[];
+  let units = $unitsStore;
+  let ingredients = $ingredientsStore;
+  // let units = data.body?.units as Unit[];
+  // let ingredients = data.body?.ingredients as Ingredient[];
 
   $: recipeEdit = form?.body?.recipe ?? cloneDeep(recipe);
 
