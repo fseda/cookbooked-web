@@ -6,3 +6,4 @@ export { default as EditRecipeModal } from './recipes/Modal.svelte';
 export { default as TrashIcon } from './TrashIcon.svelte';
 export { default as Modal } from './recipes/Modal.svelte';
 export { default as IngredientFields } from './recipes/IngredientFields.svelte';
+export { default as RecipeForm } from './recipes/RecipeForm.svelte';

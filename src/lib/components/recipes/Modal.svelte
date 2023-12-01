@@ -20,7 +20,6 @@
     const target = event.currentTarget as HTMLButtonElement;
     const modalId = target.dataset.target;
     const modal = modalId ? document.getElementById(modalId) : null;
-    console.log("toggleModal", modalId, modal)
     
     if (modal) {
       isOpen

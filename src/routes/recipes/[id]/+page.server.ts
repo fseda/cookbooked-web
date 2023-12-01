@@ -109,7 +109,7 @@ export const actions = {
     const link = formData.get('link');
     const recipeIngredients = parseIngredients(formData);
 
-f    const recipe = {
+    const recipe = {
       title,
       description,
       body,
@@ -161,6 +161,9 @@ f    const recipe = {
     }
     const resBody: ResponseBody = await res.json();
     const updatedRecipe = resBody.recipe;
+
+    // updatedRecipe.recipe_ingredients = recipeIngredients.recipe_ingredients;
+    console.log("updatedRecipe", updatedRecipe)
 
     return {
       status: res.status,

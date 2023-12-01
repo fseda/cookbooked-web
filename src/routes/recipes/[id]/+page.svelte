@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Modal, TrashIcon, IngredientFields } from '$lib/components';
+  import { Modal, RecipeForm } from '$lib/components';
   import type { Ingredient, RecipeDetails, Unit } from './+page.server';
 	import { enhance } from '$app/forms';
 	import { isLoggedIn } from '$lib/stores/user';
@@ -11,7 +11,7 @@
 
   let editModal: Modal;
   let deleteModal: Modal;
-  let editRecipeForm: HTMLFormElement;
+  let recipeEditForm: HTMLFormElement;
   let deleteRecipeForm: HTMLFormElement;
   let loading = false;
 
@@ -22,14 +22,12 @@
   let units = data.body?.units as Unit[];
   let ingredients = data.body?.ingredients as Ingredient[];
 
-  // $: recipeEdit = form?.recipeEdit ?? cloneDeep(recipe);
-  $: recipeEdit = cloneDeep(recipe);
+  $: recipeEdit = form?.body?.recipe ?? cloneDeep(recipe);
 
   const postprocess = (html: string) => {
     return DOMPurify.sanitize(html);
   }
   const toggleEditModal = (event: Event) => {
-    console.log("edit modal")
     editModal.toggleModal(event);
   }
   
@@ -82,17 +80,13 @@
   }
 
   const handleSubmitEditRecipeForm = (e: Event) => {
-    editRecipeForm.submit();
+    (recipeEditForm.querySelector('button[type="submit"]') as HTMLButtonElement).click();
     toggleEditModal(e);
   }
 
   const handleDeleteRecipeForm = () => {
     deleteRecipeForm.submit();
   }
-
-  // function removeIngredient(event: Event) {
-  //   recipe.recipe_ingredients = 
-  // }
 </script>
 
 <article>
@@ -104,7 +98,7 @@
     <p>{recipeEdit.description}</p>
   </header>
   
-  {#if recipeEdit.recipe_ingredients.length > 0}
+  {#if recipeEdit.recipe_ingredients?.length > 0}
     <section>
       <h3>Ingredients</h3>
       <ul>
@@ -162,7 +156,6 @@
   <form action="?/delete" hidden
     bind:this={deleteRecipeForm}
     method="post"
-    on:submit={() => console.log("form submitted")}
     use:enhance={async () => {
       loading = true;
 
@@ -178,57 +171,13 @@
 
   <Modal id="edit-recipe" bind:this={editModal} {loading}>
     <div slot="main">
-      <form 
-        action="?/save" 
-        method="post" 
-        id="editRecipeForm" 
-        bind:this={editRecipeForm}
-        on:submit={() => console.log("form submitted")}
-        use:enhance={async () => {
-          loading = true;
-
-          return async ({ update }) => {
-            await update().finally(() => {
-              loading = false;
-            });
-          }
-        }}
-      >
-        <label for="title">Title</label>
-        <input type="text" name="title" id="title" bind:value={recipeEdit.title} disabled={loading}>
-
-        <label for="description">Description</label>
-        <input type="text" name="description" id="description" bind:value={recipeEdit.description} disabled={loading}>
-
-        <label for="link">Link</label>
-        <input type="text" name="link" id="link" bind:value={recipeEdit.link} disabled={loading}>
-
-        <label for="body">Body</label>
-        <textarea name="body" id="body" cols="30" rows="10" bind:value={recipeEdit.body} disabled={loading}></textarea>
-
-        {#if recipeEdit.recipe_ingredients.length > 0}
-          <label for="recipe_ingredients">Ingredients</label>        
-          {/if}
-        {#each recipeEdit.recipe_ingredients as recipeIngredient, index (index)}
-          <IngredientFields 
-            bind:recipeIngredient
-            {units}
-            {ingredients}
-            {index}
-            disabled={loading}
-            on:ingredientSelect={(e) => handleIngredientSelect(e, index)}
-            on:unitSelect={(e) => handleUnitSelect(e, index)}
-            on:removeIngredient={() => removeIngredient(index)}
-          />
-        {/each}
-        <button 
-          class="outline"
-          on:click={addIngredient}  
-          disabled={loading}
-        >
-          Add Ingredient
-        </button>
-      </form>
+      <RecipeForm
+        bind:recipeEditForm
+        bind:recipeEdit
+        {units}
+        {ingredients}
+        {loading}
+      />
     </div>
 
     <a href={void(0)} slot="confirm" 
