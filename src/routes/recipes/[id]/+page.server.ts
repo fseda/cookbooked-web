@@ -79,10 +79,18 @@ export const load = async ({ cookies, params, fetch }) => {
   const resBody: ResponseBody = await res.json();
   const recipe = resBody.recipe;
 
+  const unitResBody = await (await fetch(`${VITE_API_URL}/units`)).json();
+  const units: Unit[] = unitResBody.units;
+
+  const ingredientResBody = await (await fetch(`${VITE_API_URL}/ingredients`)).json();
+  const ingredients: Ingredient[] = ingredientResBody.ingredients;
+
   return {
     status: res.status,
     body: {
       recipe,
+      units,
+      ingredients,
     },
   }
 }
