@@ -42,7 +42,7 @@ export const actions: Actions = {
     
     const res = await fetch(`${VITE_API_URL}/auth/signup`, {
       body,
-      method: 'POST',
+      method: 'post',
       headers: { 'Content-Type': 'application/json' },
     });
 
