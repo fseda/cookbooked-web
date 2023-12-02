@@ -39,3 +39,40 @@ export type RecipeDetails = {
   recipe_ingredients: RecipeIngredient[],
   link: string,
 }
+
+export type ResponseBody = {
+  recipe: RecipeDetails,
+}
+
+export type ErrorBody = {
+  success: boolean,
+  message: string,
+}
+
+type IngredientFields = "unit" | "ingredient" | "quantity";
+
+export const parseIngredients = (formData: FormData) => {
+  const ingredients: RecipeIngredient[] = [];
+
+  for (const [key, value] of formData.entries()) {
+    if (key.startsWith('recipe_ingredients')) {
+      const [, i, field] = key.split('.');
+      const index = parseInt(i);
+      const ingredient = ingredients[index] || {};
+      switch (field as IngredientFields) {
+        case "unit":
+          ingredient.unit_id = parseInt(value as string);
+          break;
+        case "ingredient":
+          ingredient.ingredient_id = parseInt(value as string);
+          break;
+        case "quantity":
+          ingredient.quantity = parseFloat(value as string);
+          break;
+      }
+      ingredients[index] = ingredient;
+    }
+  }
+
+  return {recipe_ingredients: ingredients};
+}

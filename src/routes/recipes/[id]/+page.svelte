@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Modal, RecipeForm } from '$lib/components';
+  import { Modal, RecipeEditForm } from '$lib/components';
   import type { Ingredient, RecipeDetails, Unit } from './+page.server';
 	import { enhance } from '$app/forms';
 	import { isLoggedIn } from '$lib/stores/user';
@@ -8,7 +8,7 @@
   import { marked } from 'marked';
   import DOMPurify from 'isomorphic-dompurify';
 	import { invalidateAll } from '$app/navigation';
-	import { units as unitsStore, ingredients as ingredientsStore } from '$lib/stores/recipes';
+  import { recipeIsSaving } from '$lib/stores/recipes';
 
   let editModal: Modal;
   let deleteModal: Modal;
@@ -20,55 +20,27 @@
   export let form;
 
   let recipe = data.body?.recipe as RecipeDetails;
-  let units = $unitsStore;
-  let ingredients = $ingredientsStore;
-  // let units = data.body?.units as Unit[];
-  // let ingredients = data.body?.ingredients as Ingredient[];
 
   $: recipeEdit = form?.body?.recipe ?? cloneDeep(recipe);
 
   const postprocess = (html: string) => {
     return DOMPurify.sanitize(html);
   }
-  const toggleEditModal = (event: Event) => {
-    editModal.toggleModal(event);
+  const toggleEditModal = (modalId: string) => {
+    editModal.toggleModal(modalId);
   }
   
-  const toggleDeleteModal = (event: Event) => {
-    deleteModal.toggleModal(event);
+  const toggleDeleteModal = (modalId: string) => {
+    deleteModal.toggleModal(modalId);
   }
 
   const clearRecipeEdit = (e: Event) => {
     recipeEdit = cloneDeep(recipe);
-    toggleEditModal(e);
+    toggleEditModal('edit-recipe');
   }
 
-  const addIngredient = () => {
-    recipeEdit.recipe_ingredients = [...recipeEdit.recipe_ingredients, {
-      recipe_id: recipe.id,
-      ingredient_id: 0,
-      unit_id: 0,
-      ingredient: {
-        id: 0,
-        name: '',
-        icon: ''
-      },
-      quantity: 0,
-      unit: {
-        id: 0,
-        name: '',
-        symbol: ''
-      }
-    }]
-  }
-
-  const removeIngredient = (index: number) => {
-    recipeEdit.recipe_ingredients = recipeEdit.recipe_ingredients.filter((_, i) => i !== index);
-  }
-
-  const handleSubmitEditRecipeForm = (e: Event) => {
+  const handleEditRecipeForm = (e: Event) => {
     (recipeEditForm.querySelector('button[type="submit"]') as HTMLButtonElement).click();
-    toggleEditModal(e);
   }
 
   const handleDeleteRecipeForm = () => {
@@ -121,15 +93,15 @@
               role="button"
               class="outline"
               data-target="edit-recipe"
-              on:click={toggleEditModal}
+              on:click={() => toggleEditModal('edit-recipe')}
             >Edit</a>
           </li>
           <li>
-            <a id="deleteBtn" href={void(0)} 
+            <a href={void(0)} 
               role="button" 
-              class="outline"
+              class="outline btn-delete"
               data-target="delete-recipe"
-              on:click={toggleDeleteModal}
+              on:click={() => toggleDeleteModal('delete-recipe')}
             >Delete
             </a>          
           </li>
@@ -144,36 +116,35 @@
     bind:this={deleteRecipeForm}
     method="post"
     use:enhance={async () => {
-      loading = true;
+      $recipeIsSaving = true;
 
       return async ({ update }) => {
         await update().finally(async () => {
-          loading = false;
-
-          await invalidateAll();
+          $recipeIsSaving = false;
+          toggleDeleteModal('delete-recipe');
         });
       }
     }}
   ></form>
 
-  <Modal id="edit-recipe" bind:this={editModal} {loading}>
+  <Modal id="edit-recipe" bind:this={editModal}>
     <div slot="main">
-      <RecipeForm
+      <RecipeEditForm
         bind:recipeEditForm
         bind:recipeEdit
-        {units}
-        {ingredients}
-        {loading}
+        on:success={() => toggleEditModal('edit-recipe')}
       />
     </div>
 
     <a href={void(0)} slot="confirm" 
-      id="saveBtn"
-      class="outline"
+      class="outline btn-save"
       role="button"
       data-target="edit-recipe"
-      on:click={handleSubmitEditRecipeForm}
-    >Save</a>
+      on:click={handleEditRecipeForm}
+      aria-busy={$recipeIsSaving}
+    >
+      {#if !$recipeIsSaving} Save {/if}
+    </a>
     <a href={void(0)} slot="cancel"
       role="button"
       class="outline secondary"
@@ -182,7 +153,7 @@
     >Cancel</a>
   </Modal>
 
-  <Modal id="delete-recipe" bind:this={deleteModal} {loading}>
+  <Modal id="delete-recipe" bind:this={deleteModal}>
     <div slot="main">
       <h2>Delete recipe</h2>
       <p>Are you sure you want to delete this recipe?</p>
@@ -191,14 +162,15 @@
 
     <a href={void(0)} slot="confirm"
       role="button"
-      class="outline btn-confirm-delete"
+      class="outline btn-delete"
       data-target="delete-recipe"
       on:click={handleDeleteRecipeForm}
+      aria-busy={$recipeIsSaving}
     >Delete</a>
   </Modal>
 {/if}
 
-<style lang="scss">
+<style>
   h2 {
     margin: 0 0 1rem 0;
   }
@@ -207,30 +179,23 @@
     margin: 0 0 1rem 0;
   }
 
-  #deleteBtn {
+  .btn-delete {
     color: red;
     border-color: red;
   }
 
-  #saveBtn {
+  .btn-save {
     color: #00A66E;
     border-color: #00A66E;
-    // background-color: #00A66E;
   }
 
   nav {
     all: initial;
     display: flex;
     justify-content: space-between;
-    // align-items: right;
   }
 
   .delete-warning {
     color: red;
-  }
-
-  .btn-confirm-delete {
-    color: red;
-    border-color: red;
   }
 </style>

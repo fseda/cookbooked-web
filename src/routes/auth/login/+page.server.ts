@@ -23,10 +23,9 @@ export const actions = {
     const password = formData.get('password');
 
     if (!username || !password) {
-      return {
-        status: 400,
+      return fail(400, {
         body: "Missing username or password",
-      }
+      });
     }
 
     const body = JSON.stringify({ username, password });

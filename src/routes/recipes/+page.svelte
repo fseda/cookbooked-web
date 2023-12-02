@@ -28,10 +28,10 @@
   </div>
 {:else}
   <section style="display:flex; justify-content: start;">
-    <a href="/recipes/new" role="button" class="outline">New Recipe</a>
+    <a href="/recipes/new" role="button">New Recipe</a>
   </section>    
   <section>
-    <div class="grid" transition:fly={{ y: 200, duration: 2000 }}>
+    <div class="grid" transition:fly={{ y: 200, duration: 300 }}>
       {#each recipes as recipe}
       <article class="recipe-container">
         <a class="recipe-link" href="/recipes/{recipe.id}">
@@ -45,7 +45,7 @@
     </div>
   </section>
   <section style="display:flex; justify-content: start;">
-    <a href="/recipes/new" role="button" class="outline">New Recipe</a>
+    <a href="/recipes/new" role="button">New Recipe</a>
   </section>   
 {/if}
 

@@ -31,8 +31,9 @@
         loading = true;
         
         return async ({ update }) => {
-          await update();
-          loading = false;
+          await update().finally(() => {
+            loading = false;
+          });
         }
       }}
     >

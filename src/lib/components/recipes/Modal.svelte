@@ -16,9 +16,7 @@
     isOpen = $modals[id] || false;
   });
 
-  export const toggleModal = (event: Event) => {
-    const target = event.currentTarget as HTMLButtonElement;
-    const modalId = target.dataset.target;
+  export const toggleModal = (modalId: string) => {
     const modal = modalId ? document.getElementById(modalId) : null;
     
     if (modal) {
@@ -113,7 +111,7 @@
       aria-label="Close"
       class="close"
       data-target="edit-recipe"
-      on:click={toggleModal}>
+      on:click={() => toggleModal(id)}>
     </a>
     <slot name="main">
       <h2>Fill me</h2>
@@ -125,7 +123,7 @@
           role="button"
           class="outline secondary"
           data-target={id}
-          on:click={toggleModal}>
+          on:click={() => toggleModal(id)}>
           Cancel
         </a>
       </slot>
@@ -133,7 +131,7 @@
         <a href="#confirm"
           role="button"
           data-target={id}
-          on:click={toggleModal}>
+          on:click={() => toggleModal(id)}>
           Confirm
         </a>
       </slot>

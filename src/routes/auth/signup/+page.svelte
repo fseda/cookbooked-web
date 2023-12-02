@@ -41,9 +41,9 @@
     <form method="post" use:enhance={() => {
       loading = true;
       
-      return async ({ update }) => {
-        await update();
-        loading = false;
+      return async ({ update, result }) => {
+        await update().finally(() => loading = false);
+        console.log("result", result);
       }
     }}>
 

@@ -1,4 +1,5 @@
 const VITE_API_URL = import.meta.env.VITE_API_URL;
+import { parseIngredients } from '$lib/models/Recipe.js';
 import { error, fail, redirect } from '@sveltejs/kit';
 
 type Category = {
@@ -58,8 +59,6 @@ export const load = async ({ cookies, params, fetch }) => {
     throw redirect(303, '/auth/login');
   }
 
-  if (params.id === 'new') throw redirect(303, '/recipes/new');
-
   const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {
     headers: {
       authorization: `Bearer ${token}`,
@@ -79,18 +78,10 @@ export const load = async ({ cookies, params, fetch }) => {
   const resBody: ResponseBody = await res.json();
   const recipe = resBody.recipe;
 
-  // const unitResBody = await (await fetch(`${VITE_API_URL}/units`)).json();
-  // const units: Unit[] = unitResBody.units;
-
-  // const ingredientResBody = await (await fetch(`${VITE_API_URL}/ingredients`)).json();
-  // const ingredients: Ingredient[] = ingredientResBody.ingredients;
-
   return {
     status: res.status,
     body: {
       recipe,
-      // units,
-      // ingredients,
     },
   }
 }
@@ -162,9 +153,6 @@ export const actions = {
     const resBody: ResponseBody = await res.json();
     const updatedRecipe = resBody.recipe;
 
-    // updatedRecipe.recipe_ingredients = recipeIngredients.recipe_ingredients;
-    console.log("updatedRecipe", updatedRecipe)
-
     return {
       status: res.status,
       body: {recipe: updatedRecipe},
@@ -198,32 +186,4 @@ export const actions = {
 
     throw redirect(303, '/recipes');
   }
-}
-
-type IngredientFields = "unit" | "ingredient" | "quantity";
-
-const parseIngredients = (formData: FormData) => {
-  const ingredients: RecipeIngredient[] = [];
-
-  for (const [key, value] of formData.entries()) {
-    if (key.startsWith('recipe_ingredients')) {
-      const [, i, field] = key.split('.');
-      const index = parseInt(i);
-      const ingredient = ingredients[index] || {};
-      switch (field as IngredientFields) {
-        case "unit":
-          ingredient.unit_id = parseInt(value as string);
-          break;
-        case "ingredient":
-          ingredient.ingredient_id = parseInt(value as string);
-          break;
-        case "quantity":
-          ingredient.quantity = parseFloat(value as string);
-          break;
-      }
-      ingredients[index] = ingredient;
-    }
-  }
-
-  return {recipe_ingredients: ingredients};
 }
