@@ -5,9 +5,10 @@
 	import { isLoggedIn } from "$lib/stores/user";
   import { isFieldValid, isPasswordValid } from "$lib/validation/input";
 	import { fly } from "svelte/transition";
-	import type { ActionData } from "./$types.js";
+	import type { ActionData, PageData } from "./$types.js";
+	import { goto } from "$app/navigation";
 
-  export let data;
+  export let data: PageData;
   export let form: ActionData;
   
   let loading = false;
@@ -16,10 +17,15 @@
   let password: string = '';
 
   $: disableSubmitBtn = !isFieldValid(login) || !isPasswordValid(password);
-
-  $: isLoggedIn.set(!!data.token);
+  $: $isLoggedIn = !!data.token;
 </script>
   
+{#if data?.message}
+<div class="warnings">
+  <small transition:fly={{ x: -1000, duration: 500 }} class="error">{data.message}</small>
+</div>
+{/if}
+
 <article class="grid">
   <div>
     <hgroup>
@@ -30,15 +36,19 @@
       method="post" use:enhance={() => {
         loading = true;
         
-        return async ({ update }) => {
+        return async ({ update, result }) => {
           await update().finally(() => {
             loading = false;
+            if (result.type === "success") goto(data.redirectRoute);
+            else goto("/recipes");
           });
         }
       }}
     >
       {#if form?.error}
-        <small transition:fly={{ x: -1000, duration: 1000 }} class="error">{form.error.message}</small>
+        <div style:display="flex">
+          <small>{form.error.message}</small>
+        </div>
       {/if}
       
       <LoginTextInputField
@@ -84,5 +94,10 @@
   .error {
     color: red;
     margin-bottom: 1rem;
+  }
+
+  .warnings {
+    display: flex;
+    justify-content: center;
   }
 </style>

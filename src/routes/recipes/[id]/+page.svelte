@@ -2,6 +2,7 @@
   import { Modal, RecipeEditForm } from '$lib/components';
   import type { Ingredient, RecipeDetails, Unit } from './+page.server';
 	import { enhance } from '$app/forms';
+	import { page } from '$app/stores';
 	import { isLoggedIn } from '$lib/stores/user';
   
 	import { cloneDeep } from 'lodash';
@@ -9,6 +10,7 @@
   import DOMPurify from 'isomorphic-dompurify';
 	import { invalidateAll } from '$app/navigation';
   import { recipeIsSaving } from '$lib/stores/recipes';
+	import type { PageData } from './$types';
 
   let editModal: Modal;
   let deleteModal: Modal;
@@ -16,10 +18,11 @@
   let deleteRecipeForm: HTMLFormElement;
   let loading = false;
 
-  export let data;
+  export let data: PageData;
   export let form;
 
-  let recipe = data.body?.recipe as RecipeDetails;
+  let recipe = data.body?.recipe;
+  let canEdit = data.body?.canEdit;
 
   $: recipeEdit = form?.body?.recipe ?? cloneDeep(recipe);
 
@@ -46,6 +49,12 @@
   const handleDeleteRecipeForm = () => {
     deleteRecipeForm.submit();
   }
+
+  let tooltipCopy = "Copy to Clipboard";
+  const handleCopy = () => {
+    navigator.clipboard.writeText($page.url.href);
+    tooltipCopy = "Copied!";
+  }
 </script>
 
 <article>
@@ -53,8 +62,16 @@
     {#if form?.error}
       <p>{form?.error}</p>
     {/if}
-    <h2>{recipeEdit.title}</h2>
-    <p>{recipeEdit.description}</p>
+    <div class="main-header">
+      <hgroup>
+        <h2>{recipeEdit.title}</h2>
+        <p>{recipeEdit.description}</p>
+      </hgroup>
+
+      <div>
+        <p data-tooltip={tooltipCopy} class="share" on:click={handleCopy}>Share</p>
+      </div>
+    </div>
   </header>
   
   {#if recipeEdit.recipe_ingredients?.length > 0}
@@ -86,7 +103,7 @@
         </ul>
       {/if}
 
-      {#if $isLoggedIn}
+      {#if $isLoggedIn && canEdit}
         <ul>
           <li>
             <a href={void(0)}
@@ -111,7 +128,7 @@
   </footer>
 </article>
 
-{#if $isLoggedIn}
+{#if $isLoggedIn && canEdit}
   <form action="?/delete" hidden
     bind:this={deleteRecipeForm}
     method="post"
@@ -171,6 +188,15 @@
 {/if}
 
 <style>
+  .main-header {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .share:hover {
+    color: var(--pico-contrast-hover)
+  }
+
   h2 {
     margin: 0 0 1rem 0;
   }

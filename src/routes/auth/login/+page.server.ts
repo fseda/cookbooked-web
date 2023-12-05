@@ -2,13 +2,20 @@ const VITE_API_URL = import.meta.env.VITE_API_URL;
 import { parseToken } from '$lib/auth/jwt.js';
 import { fail, redirect } from '@sveltejs/kit';
 
-export const load = async ({ cookies }) => {
+export const load = async ({ cookies, url }) => {
   const token = cookies.get("token");
   if (token) {
     throw redirect(303, "/");
   }
 
-  return;
+  const redirectRoute = url.searchParams.get("redirect") ?? "";
+  const message = url.searchParams.get("message") ?? "";
+
+  return {
+    redirectRoute,
+    message,
+    error: undefined,
+  };
 };
 
 type ResBody = {
@@ -49,6 +56,6 @@ export const actions = {
       httpOnly: true,
     });
 
-    throw redirect(303, "/");
+    return;
 	}
 };

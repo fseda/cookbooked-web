@@ -46,6 +46,7 @@ export type RecipeDetails = {
 
 export type ResponseBody = {
   recipe: RecipeDetails,
+  can_edit: boolean,
 }
 
 export type ErrorBody = {
@@ -56,7 +57,8 @@ export type ErrorBody = {
 export const load = async ({ cookies, params, fetch }) => {
   const token = cookies.get('token');
   if (!token) {
-    throw redirect(303, '/auth/login');
+    const message = 'You must be authenticated to view this recipe.'
+    throw redirect(303, `/auth/login?redirect=/recipes/${params.id}&message=${message}`);
   }
 
   const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {
@@ -77,11 +79,13 @@ export const load = async ({ cookies, params, fetch }) => {
 
   const resBody: ResponseBody = await res.json();
   const recipe = resBody.recipe;
+  const canEdit = resBody.can_edit;
 
   return {
     status: res.status,
     body: {
       recipe,
+      canEdit,
     },
   }
 }
