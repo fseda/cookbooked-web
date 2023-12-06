@@ -4,7 +4,7 @@
 	import SubmitBtn from "$lib/components/forms/SubmitBtn.svelte";
 	import { isLoggedIn } from "$lib/stores/user";
   import { isFieldValid, isPasswordValid } from "$lib/validation/input";
-	import { fly } from "svelte/transition";
+	import { fade, fly } from "svelte/transition";
 	import type { ActionData, PageData } from "./$types.js";
 	import { goto } from "$app/navigation";
 
@@ -45,9 +45,7 @@
       }}
     >
       {#if form?.error}
-        <div style:display="flex">
-          <small>{form.error.message}</small>
-        </div>
+        <small class="error" transition:fade={{ duration: 100 }}>{form.error.message}</small>
       {/if}
       
       <LoginTextInputField
