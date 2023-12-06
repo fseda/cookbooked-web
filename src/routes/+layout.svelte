@@ -6,6 +6,7 @@
   import "../app.css";
   import "@picocss/pico";
 	import { browser } from "$app/environment";
+	import { fade, fly } from "svelte/transition";
 
   export let data;
   $: isLoggedIn.set(!!data.token);
@@ -30,8 +31,9 @@
 
 <Header/>
 
-<main class="container">
-  <slot />
-</main>
-
+{#key data.pathname}
+  <main class="container" in:fade={{ duration: 100, delay: 200 }} out:fade={{ duration: 100 }}>
+    <slot />
+  </main>
+{/key}
 <!-- <Footer/> -->
