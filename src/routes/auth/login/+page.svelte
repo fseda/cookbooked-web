@@ -40,7 +40,6 @@
           await update().finally(() => {
             loading = false;
             if (result.type === "success") goto(data.redirectRoute);
-            else goto("/recipes");
           });
         }
       }}
