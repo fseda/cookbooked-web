@@ -2,6 +2,7 @@
 	import { createEventDispatcher } from "svelte";
   import type { Ingredient, RecipeIngredient, Unit } from "../../../routes/recipes/[id]/+page.server";
 	import { TrashIcon } from "$lib/components";
+	import { fly } from "svelte/transition";
 
   export let recipeIngredient: RecipeIngredient;
   export let units: Unit[];
@@ -24,7 +25,7 @@
   }
 </script>
 
-<div style="display:flex; gap:1rem;">
+<div style="display:flex; gap:1rem;" in:fly={{ y: 100, duration: 500 }} out:fly={{ y: 50, duration: 250 }}>
   <div role="group">
     <select 
       required 

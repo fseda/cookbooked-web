@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from "$app/navigation";
   import { IngredientFields } from "$lib/components";
   import type { Ingredient, RecipeDetails, Unit } from "$lib/models/Recipe";
   import { units, ingredients, newRecipe } from "$lib/stores/recipes";
@@ -51,6 +52,11 @@
     recipe.recipe_ingredients[index].ingredient_id = recipe.recipe_ingredients[index].ingredient.id;
   }
 
+  const handleCancelCreate = () => {
+    goto("/recipes");
+    $newRecipe = resetRecipe();
+  }
+
 </script>
 
 
@@ -92,7 +98,7 @@
 
   {#if actionBtns}
     <div class="action-btns">
-      <button type="button" class="outline secondary" on:click={() => $newRecipe = resetRecipe()} disabled={loading}>Cancel</button>
+      <button type="button" class="outline secondary" on:click={handleCancelCreate} disabled={loading}>Cancel</button>
       <button type="submit" class="outline btn-save" disabled={loading} aria-busy={loading}>
         {#if !loading} Save {/if}
       </button>

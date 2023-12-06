@@ -21,7 +21,6 @@
         loading = false; 
         if (result.type === 'success') {
           $newRecipe = resetRecipe();
-          console.log(result)
           goto(`${result.data?.location}`);
         }
       });
