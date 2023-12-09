@@ -7,6 +7,5 @@ export const resetRecipe = (): RecipeDetails => {
     description: '',
     link: '',
     body: '',
-    recipe_ingredients: [],
   }
 }

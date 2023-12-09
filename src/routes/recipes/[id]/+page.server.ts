@@ -1,46 +1,11 @@
 const VITE_API_URL = import.meta.env.VITE_API_URL;
-import { parseIngredients } from '$lib/models/Recipe.js';
 import { error, fail, redirect } from '@sveltejs/kit';
-
-type Category = {
-  id: number,
-  category: string,
-  description: string,
-}
-
-export type System = "metric" | "imperial";
-export type Type = "weight" | "volume" | "temperature";
-export type Unit = {
-  id: number,
-  name: string,
-  symbol: string,
-  system?: System,
-  type?: Type,
-}
-
-export type Ingredient = {
-  id: number,
-  icon: string,
-  name: string,
-  category?: Category,
-}
-
-export type RecipeIngredient = {
-  id?: number,
-  recipe_id: number,
-  unit_id: number,
-  ingredient_id: number,
-  ingredient: Ingredient,
-  quantity: number,
-  unit: Unit,
-}
 
 export type RecipeDetails = {
   id: number,
   title: string,
   description: string,
   body: string,
-  recipe_ingredients: RecipeIngredient[],
   link: string,
 }
 
@@ -102,35 +67,12 @@ export const actions = {
     const description = formData.get('description');
     const body = formData.get('body');
     const link = formData.get('link');
-    const recipeIngredients = parseIngredients(formData);
 
     const recipe = {
       title,
       description,
       body,
       link: link?.length ?? "".length > 0 ? link : "a ",
-    }
-
-    const riRes = await fetch(`${VITE_API_URL}/recipes/${params.id}/ingredients`, {
-      method: 'PATCH',
-      body: JSON.stringify(recipeIngredients),
-      headers: {
-        authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (riRes.status === 401) {
-      cookies.delete('token');
-      throw redirect(303, '/auth/login'); 
-    }
-
-    if (!riRes.ok) {
-      const resBody: ErrorBody = await riRes.json();
-      return fail(riRes.status, {
-        recipeEdit: recipe,
-        error: resBody.message,
-      })
     }
 
     const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {

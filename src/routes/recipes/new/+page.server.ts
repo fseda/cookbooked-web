@@ -1,4 +1,4 @@
-import { parseIngredients, type ErrorBody, type ResponseBody } from '$lib/models/Recipe.js';
+import type { ErrorBody, ResponseBody } from '$lib/models/Recipe.js';
 import { fail, redirect } from '@sveltejs/kit';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
@@ -15,14 +15,12 @@ export const actions = {
     const description = formData.get('description');
     const body = formData.get('body');
     const link = formData.get('link');
-    const recipeIngredients = parseIngredients(formData);
 
     const recipe = {
       title,
       description,
       body,
       link: link?.length ?? "".length > 0 ? link : "a ",
-      ...recipeIngredients,
     }
 
     const res = await fetch(`${VITE_API_URL}/recipes/new`, {

@@ -7,7 +7,6 @@
   import "@picocss/pico";
 	import { browser } from "$app/environment";
 	import { fade } from "svelte/transition";
-  import { fetchIngredients, fetchUnits } from "$lib/stores/recipes";
 
   export let data;
   $: isLoggedIn.set(!!data.token);
@@ -20,11 +19,6 @@
   }
 
   onMount(() => {
-    (async () => {
-      await fetchUnits();
-      await fetchIngredients();
-    })();
-
     if (browser) 
       window.addEventListener('touchmove', handleTouchMove, { passive: false });
 
