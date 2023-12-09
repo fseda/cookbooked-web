@@ -5,7 +5,6 @@ export { default as SubmitBtn } from './forms/SubmitBtn.svelte';
 export { default as EditRecipeModal } from './recipes/Modal.svelte';
 export { default as TrashIcon } from './TrashIcon.svelte';
 export { default as Modal } from './recipes/Modal.svelte';
-export { default as IngredientFields } from './recipes/IngredientFields.svelte';
 export { default as RecipeFields } from './recipes/RecipeFields.svelte';
 export { default as RecipeEditForm } from './recipes/RecipeEditForm.svelte';
 export { default as RecipeForm } from './recipes/RecipeForm.svelte';

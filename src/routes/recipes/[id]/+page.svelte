@@ -1,6 +1,5 @@
 <script lang="ts">
   import { Modal, RecipeEditForm } from '$lib/components';
-  import type { Ingredient, RecipeDetails, Unit } from './+page.server';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import { isLoggedIn } from '$lib/stores/user';
@@ -8,7 +7,6 @@
 	import { cloneDeep } from 'lodash';
   import { marked } from 'marked';
   import DOMPurify from 'isomorphic-dompurify';
-	import { invalidateAll } from '$app/navigation';
   import { recipeIsSaving } from '$lib/stores/recipes';
 	import type { PageData } from './$types';
 
@@ -74,24 +72,9 @@
     </div>
   </header>
   
-  {#if recipeEdit.recipe_ingredients?.length > 0}
-    <section>
-      <h3>Ingredients</h3>
-      <ul>
-        {#each recipeEdit.recipe_ingredients as recipeIngredient}
-          <li>
-            <!-- <img src={recipeIngredient.ingredient.icon} alt={recipeIngredient.ingredient.name} /> -->
-            <p><b>{recipeIngredient.ingredient.name}</b> <kbd>{recipeIngredient.quantity} {recipeIngredient.unit.symbol}</kbd></p>
-          </li>
-        {/each}
-      </ul>
-    </section>
-  {/if}
-
-  <section>
-    <h3>Instructions</h3>
+  <main>
     {@html marked(recipeEdit.body, { hooks: { preprocess: (markdown) => markdown, postprocess }})}
-  </section>
+  </main>
 
   <footer>
     <nav>

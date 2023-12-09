@@ -43,7 +43,6 @@
       
       return async ({ update, result }) => {
         await update().finally(() => loading = false);
-        console.log("result", result);
       }
     }}>
 
