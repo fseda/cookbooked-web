@@ -72,7 +72,7 @@ export const actions = {
       title,
       description,
       body,
-      link: link?.length ?? "".length > 0 ? link : "a ",
+      link,
     }
 
     const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {

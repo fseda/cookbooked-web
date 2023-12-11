@@ -14,7 +14,6 @@
   let deleteModal: Modal;
   let recipeEditForm: HTMLFormElement;
   let deleteRecipeForm: HTMLFormElement;
-  let loading = false;
 
   export let data: PageData;
   export let form;
