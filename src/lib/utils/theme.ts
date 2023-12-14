@@ -1,6 +1,7 @@
-"use strict";
-!function() {
-    var e = {
+import { theme, type ColorScheme } from "$lib/stores/theme";
+
+export const initTheme = () => {
+    const themeManager = {
         _scheme: "auto",
         change: {
             light: "<i>Turn on dark mode</i>",
@@ -9,7 +10,8 @@
         buttonsTarget: ".theme-switcher",
         localStorageKey: "picoPreferredColorScheme",
         init() {
-            this.scheme = this.schemeFromLocalStorage,
+            this.scheme = this.schemeFromLocalStorage || 'light';
+            theme.set(this.scheme as ColorScheme);
             this.initSwitchers()
         },
         get schemeFromLocalStorage() {
@@ -22,15 +24,16 @@
             document.querySelectorAll(this.buttonsTarget).forEach(e=>{
                 e.addEventListener("click", ()=>{
                     "dark" == this.scheme ? this.scheme = "light" : this.scheme = "dark"
+                    theme.set(this.scheme as ColorScheme);
                 }
                 , !1)
             }
             )
         },
-        addButton(e) {
-            var t = document.createElement(e.tag);
+        addButton(e: { tag: string; class: string; target: string; }) {
+            const t = document.createElement(e.tag);
             t.className = e.class,
-            document.querySelector(e.target).appendChild(t)
+            (document.querySelector(e.target) as HTMLElement).appendChild(t)
         },
         set scheme(e) {
             "auto" == e ? "dark" == this.preferredColorScheme ? this._scheme = "dark" : this._scheme = "light" : "dark" != e && "light" != e || (this._scheme = e),
@@ -41,9 +44,9 @@
             return this._scheme
         },
         applyScheme() {
-            document.querySelector("html").setAttribute("data-theme", this.scheme),
+            (document.querySelector("html") as HTMLHtmlElement).setAttribute("data-theme", this.scheme),
             document.querySelectorAll(this.buttonsTarget).forEach(e=>{
-                var t = "dark" == this.scheme ? this.change.dark : this.change.light;
+                const t = "dark" == this.scheme ? this.change.dark : this.change.light;
                 e.innerHTML = t,
                 e.setAttribute("aria-label", t.replace(/<[^>]*>?/gm, ""))
             }
@@ -53,7 +56,7 @@
             void 0 !== window.localStorage && window.localStorage.setItem(this.localStorageKey, this.scheme)
         }
     }
-      , t = {
+      , toggleManager = {
         _state: "closed-on-mobile",
         toggleLink: document.getElementById("toggle-docs-navigation"),
         nav: document.querySelector("main > aside > nav"),
@@ -66,11 +69,11 @@
             this._state = e
         }
     };
-    e.addButton({
+    themeManager.addButton({
         tag: "BUTTON",
         class: "contrast switcher theme-switcher",
         target: "body"
     }),
-    e.init(),
-    t.init()
-}();
+    themeManager.init(),
+    toggleManager.init()
+};

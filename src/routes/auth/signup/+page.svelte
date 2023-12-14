@@ -2,7 +2,7 @@
   import { enhance } from "$app/forms";
   import { PasswordInputField, SubmitBtn, AuthTextInputField } from "$lib/components";
   import { isEmailValid, isNewPasswordConfirmValid, isNewPasswordValid, isUsernameValid } from "$lib/validation/input";
-	import { isLoggedIn } from "$lib/stores/user";
+	import { authenticated } from "$lib/stores/user";
 	import type { ActionData } from "./$types.js";
 	import { fade, fly } from "svelte/transition";
 
@@ -27,7 +27,7 @@
     !isNewPasswordValid(password) ||
     usernameExists || emailExists;
   
-  $: isLoggedIn.set(!!data.token);
+  $: authenticated.set(!!data.token);
 
 </script>
   

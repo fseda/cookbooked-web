@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { isLoggedIn } from "$lib/stores/user";
+	import { authenticated } from "$lib/stores/user";
 
   let loggedIn: boolean;
-  $: loggedIn = $isLoggedIn;
+  $: loggedIn = $authenticated;
 </script>
 
 <header>
