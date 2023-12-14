@@ -37,10 +37,10 @@ export const GET = async ({ cookies, fetch, url }) => {
   } 
 
   if (authenticated) {
-    throw redirect(303, '/');
+    redirect(303, '/');
   }
 
-  throw redirect(303, '/auth/login');
+  redirect(303, '/auth/login');
 }
 
 type AccessTokenResponse = {
