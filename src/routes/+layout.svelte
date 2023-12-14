@@ -1,7 +1,7 @@
 <script lang="ts">
   const VITE_API_URL = import.meta.env.VITE_API_URL;
 	import Header from "$lib/components/layout/Header.svelte";
-	import { authenticated, authenticating } from "$lib/stores/user";
+	import { authenticated } from "$lib/stores/user";
 	import { onMount } from "svelte";
   import "../app.css";
   import "@picocss/pico";

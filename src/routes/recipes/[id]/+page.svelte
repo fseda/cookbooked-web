@@ -2,7 +2,7 @@
   import { Modal, RecipeEditForm } from '$lib/components';
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
-	import { isLoggedIn } from '$lib/stores/user';
+	import { authenticated } from '$lib/stores/user';
   
 	import { cloneDeep } from 'lodash';
   import { marked } from 'marked';
@@ -85,7 +85,7 @@
         </ul>
       {/if}
 
-      {#if $isLoggedIn && canEdit}
+      {#if $authenticated && canEdit}
         <ul>
           <li>
             <a href={void(0)}
@@ -110,7 +110,7 @@
   </footer>
 </article>
 
-{#if $isLoggedIn && canEdit}
+{#if $authenticated && canEdit}
   <form action="?/delete" hidden
     bind:this={deleteRecipeForm}
     method="post"

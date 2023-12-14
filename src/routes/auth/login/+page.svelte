@@ -1,12 +1,16 @@
 <script lang="ts">
+  import { v4 as uuidv4 } from 'uuid';
 	import { enhance } from "$app/forms";
   import { LoginTextInputField, PasswordInputField } from "$lib/components";
 	import SubmitBtn from "$lib/components/forms/SubmitBtn.svelte";
-	import { isLoggedIn } from "$lib/stores/user";
+	import { authenticated } from "$lib/stores/user";
   import { isFieldValid, isPasswordValid } from "$lib/validation/input";
 	import { fade, fly } from "svelte/transition";
 	import type { ActionData, PageData } from "./$types.js";
 	import { goto } from "$app/navigation";
+	import GitHubMark from "$lib/components/github/GitHubMark.svelte";
+	import GitHubLogo from "$lib/components/github/GitHubLogo.svelte";
+	import { browser } from '$app/environment';
 
   export let data: PageData;
   export let form: ActionData;
@@ -17,7 +21,17 @@
   let password: string = '';
 
   $: disableSubmitBtn = !isFieldValid(login) || !isPasswordValid(password);
-  $: $isLoggedIn = !!data.token;
+  $: $authenticated = !!data.token;
+  
+  const handleSignInWithGitHub = () => {
+    const client_id = import.meta.env.VITE_GITHUB_CLIENT_ID;
+    const state = uuidv4();
+    if (browser) {
+      localStorage.setItem('github_oauth_state', state);
+    }
+
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${client_id}&state=${state}`;
+  }
 </script>
   
 {#if data?.message}
@@ -26,7 +40,7 @@
 </div>
 {/if}
 
-<article class="grid">
+<article>
   <div>
     <hgroup>
       <h1>Log in</h1>
@@ -80,6 +94,16 @@
       >Login</SubmitBtn>
     </form>
   </div>
+
+  <hr>
+  <section class="alternate-login-section">
+    <p><strong>or sign in with</strong></p>
+    <!-- GitHub -->
+    <button id="github-login" class="btn-social-login contrast" on:click={handleSignInWithGitHub}>
+      <GitHubLogo reversed/>
+      <GitHubMark reversed/>
+    </button>
+  </section>
 </article>
 
 <style>
@@ -96,5 +120,18 @@
   .warnings {
     display: flex;
     justify-content: center;
+  }
+
+  .btn-social-login {
+    font-weight: 600;
+    /* max-height: 2rem */
+  }
+
+  .alternate-login-section {
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    margin-bottom: 1rem;
   }
 </style>
