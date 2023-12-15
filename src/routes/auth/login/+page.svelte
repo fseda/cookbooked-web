@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { v4 as uuidv4 } from 'uuid';
 	import { enhance } from "$app/forms";
   import { LoginTextInputField, PasswordInputField } from "$lib/components";
 	import SubmitBtn from "$lib/components/forms/SubmitBtn.svelte";
@@ -11,6 +10,7 @@
 	import GitHubMark from "$lib/components/github/GitHubMark.svelte";
 	import GitHubLogo from "$lib/components/github/GitHubLogo.svelte";
 	import { browser } from '$app/environment';
+	import AuthTextInputField from "$lib/components/forms/AuthTextInputField.svelte";
 
   export let data: PageData;
   export let form: ActionData;
@@ -22,16 +22,6 @@
 
   $: disableSubmitBtn = !isFieldValid(login) || !isPasswordValid(password);
   $: $authenticated = !!data.token;
-  
-  const handleSignInWithGitHub = () => {
-    const client_id = import.meta.env.VITE_GITHUB_CLIENT_ID;
-    const state = uuidv4();
-    if (browser) {
-      localStorage.setItem('github_oauth_state', state);
-    }
-
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${client_id}&state=${state}`;
-  }
 </script>
   
 {#if data?.message}
@@ -98,11 +88,21 @@
   <hr>
   <section class="alternate-login-section">
     <p><strong>or sign in with</strong></p>
+
     <!-- GitHub -->
-    <button id="github-login" class="btn-social-login contrast" on:click={handleSignInWithGitHub}>
-      <GitHubLogo reversed/>
-      <GitHubMark reversed/>
-    </button>
+    <form method="post" action="/auth/github" use:enhance={({ formData }) => {
+      return async ({ result }) => {
+        const client_id = result.client_id;
+        const state = result.state;
+
+        window.location.href = `https://github.com/login/oauth/authorize?client_id=${client_id}&state=${state}`;
+      }
+    }}>
+      <button type="submit" id="github-login" class="btn-social-login contrast" >
+        <GitHubLogo reversed/>
+        <GitHubMark reversed/>
+      </button>
+    </form>
   </section>
 </article>
 

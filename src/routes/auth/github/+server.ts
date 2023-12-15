@@ -1,10 +1,11 @@
 import { error, redirect } from '@sveltejs/kit';
+import { v4 as uuidv4 } from 'uuid';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
 
 export const prerender = false;
 
-export const GET = async ({ cookies, fetch, url }): Promise<void> => {
+export const GET = async ({ cookies, fetch, url }) => {
   const state = url.searchParams.get('state');
   const code = url.searchParams.get('code');
   let authenticating = !!code;
@@ -41,6 +42,18 @@ export const GET = async ({ cookies, fetch, url }): Promise<void> => {
   }
 
   throw redirect(303, '/auth/login');
+}
+
+export const POST = ({ cookies }) => {
+  const client_id = import.meta.env.VITE_GITHUB_CLIENT_ID;
+  const state = uuidv4();
+  cookies.set('github_oauth_state', state, { path: '/auth' });
+  console.log('state', state);
+
+  return new Response(JSON.stringify({
+    client_id,
+    state,
+  }))
 }
 
 type AccessTokenResponse = {
