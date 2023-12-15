@@ -49,6 +49,8 @@ export const POST = ({ cookies }) => {
   const state = uuidv4();
   cookies.set('github_oauth_state', state, { path: '/auth' });
 
+  console.log('client_id', CLIENT_ID);
+
   return new Response(JSON.stringify({
     client_id: CLIENT_ID,
     state,
