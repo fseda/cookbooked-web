@@ -21,25 +21,6 @@ export const actions: Actions = {
     const password = formData.get('password');
     const body = JSON.stringify({ username, email, password });
 
-    const usernameExists = (await (
-      await fetch(`${VITE_API_URL}/users/exists?username=${username}`)
-    ).json())["exists"];
-
-    const emailExists = (await (
-      await fetch(`${VITE_API_URL}/users/exists?email=${email}`)
-    ).json())["exists"];
-    
-    if (usernameExists || emailExists) {
-      return fail(400, {
-        username,
-        email,
-        error: {
-          username: usernameExists ? "username already in use" : "",
-          email: emailExists ? "email already in use" : "",
-        },
-      })
-    }
-    
     const res = await fetch(`${VITE_API_URL}/auth/signup`, {
       body,
       method: 'post',

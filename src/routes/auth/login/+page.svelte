@@ -16,6 +16,7 @@
   export let form: ActionData;
   
   let loading = false;
+  let githubLoading = false;
 
   let login: string = '';
   let password: string = '';
@@ -90,15 +91,20 @@
     <p><strong>or sign in with</strong></p>
 
     <!-- GitHub -->
-    <form method="post" action="/auth/github" use:enhance={({ formData }) => {
-      return async ({ result }) => {
-        const client_id = result.client_id;
-        const state = result.state;
+    <form method="post" action="/auth/github" use:enhance={() => {
+      githubLoading = true;
 
-        window.location.href = `https://github.com/login/oauth/authorize?client_id=${client_id}&state=${state}`;
+      return async ({ result, update }) => {
+        await update().finally(() => {
+          const client_id = result.client_id;
+          const state = result.state;
+
+          // githubLoading = false;
+          window.location.href = `https://github.com/login/oauth/authorize?client_id=${client_id}&state=${state}`;
+        });
       }
     }}>
-      <button type="submit" id="github-login" class="btn-social-login contrast" >
+      <button type="submit" id="github-login" class="btn-social-login contrast" aria-busy={githubLoading}>
         <GitHubLogo reversed/>
         <GitHubMark reversed/>
       </button>
