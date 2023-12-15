@@ -1,5 +1,5 @@
 import { redirect } from "@sveltejs/kit"
 
 export const GET = () => {
-  redirect(303, '/recipes')
+  throw redirect(303, '/recipes')
 }

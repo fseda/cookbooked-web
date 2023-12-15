@@ -15,7 +15,7 @@ export const GET = async ({ cookies, fetch, url }): Promise<void> => {
   if (!authenticated && authenticating) {
     const storesState = cookies.get('github_oauth_state');
     cookies.delete('github_oauth_state');
-    if (storesState !== state) error(400, "Stored state doesn't match value returned from GitHub");
+    if (storesState !== state) throw error(400, "Stored state doesn't match value returned from GitHub");
 
     const response = await fetch(VITE_API_URL + "/auth/github/login", {
       method: "POST",
@@ -26,7 +26,7 @@ export const GET = async ({ cookies, fetch, url }): Promise<void> => {
     });
   
     if (!response.ok) {
-      error(response.status, "Failed to get GitHub access token");
+      throw error(response.status, "Failed to get GitHub access token");
     }
   
     const { token }: AccessTokenResponse = await response.json();
@@ -37,10 +37,10 @@ export const GET = async ({ cookies, fetch, url }): Promise<void> => {
   } 
 
   if (authenticated) {
-    redirect(303, '/');
+    throw redirect(303, '/');
   }
 
-  redirect(303, '/auth/login');
+  throw redirect(303, '/auth/login');
 }
 
 type AccessTokenResponse = {

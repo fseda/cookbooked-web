@@ -18,7 +18,7 @@ type ResponseBody = {
 export const load = async ({ cookies, fetch }) => {
   const token = cookies.get('token');
   if (!token) {
-    redirect(303, '/auth/login');
+    throw redirect(303, '/auth/login');
   }
 
   const res = await fetch(`${VITE_API_URL}/recipes`, {
@@ -29,7 +29,7 @@ export const load = async ({ cookies, fetch }) => {
 
   if (res.status === 401) {
     cookies.delete('token', { path: '/' });
-    redirect(303, '/auth/login'); 
+    throw redirect(303, '/auth/login'); 
   }
 
   const resBody: ResponseBody = await res.json();

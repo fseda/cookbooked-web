@@ -5,7 +5,7 @@ import { fail, redirect } from '@sveltejs/kit';
 export const load = async ({ cookies, url }) => {
   const token = cookies.get("token");
   if (token) {
-    redirect(303, "/");
+    throw redirect(303, "/");
   }
 
   const redirectRoute = url.searchParams.get("redirect") ?? "";

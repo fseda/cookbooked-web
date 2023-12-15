@@ -23,7 +23,7 @@ export const load = async ({ cookies, params, fetch }) => {
   const token = cookies.get('token');
   if (!token) {
     const message = 'You must be authenticated to view this recipe.'
-    redirect(303, `/auth/login?redirect=/recipes/${params.id}&message=${message}`);
+    throw redirect(303, `/auth/login?redirect=/recipes/${params.id}&message=${message}`);
   }
 
   const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {
@@ -34,12 +34,12 @@ export const load = async ({ cookies, params, fetch }) => {
 
   if (res.status === 401) {
     /* @migration task: add path argument */ cookies.delete('token');
-    redirect(303, '/auth/login'); 
+    throw redirect(303, '/auth/login'); 
   }
 
   if (!res.ok) {
     const errorBody: ErrorBody = await res.json();
-    error(res.status, errorBody.message);
+    throw error(res.status, errorBody.message);
   }
 
   const resBody: ResponseBody = await res.json();
@@ -59,7 +59,7 @@ export const actions = {
   save: async ({ request, cookies, fetch, params }) => {
     const token = cookies.get('token');
     if (!token) {
-      redirect(303, '/auth/login');
+      throw redirect(303, '/auth/login');
     }
 
     const formData = await request.formData();
@@ -86,7 +86,7 @@ export const actions = {
 
     if (res.status === 401) {
       /* @migration task: add path argument */ cookies.delete('token');
-      redirect(303, '/auth/login'); 
+      throw redirect(303, '/auth/login'); 
     }
 
     if (!res.ok) {
@@ -108,7 +108,7 @@ export const actions = {
   delete: async ({ cookies, fetch, params }) => {
     const token = cookies.get('token');
     if (!token) {
-      redirect(303, '/auth/login');
+      throw redirect(303, '/auth/login');
     }
 
     const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {
@@ -120,7 +120,7 @@ export const actions = {
 
     if (res.status === 401) {
       cookies.delete('token', { path: '/' });
-      redirect(303, '/auth/login'); 
+      throw redirect(303, '/auth/login'); 
     }
 
     if (!res.ok) {
@@ -130,6 +130,6 @@ export const actions = {
       })
     }
 
-    redirect(303, '/recipes');
+    throw redirect(303, '/recipes');
   }
 }

@@ -5,7 +5,7 @@ import { fail, redirect, type Actions, type ServerLoad } from '@sveltejs/kit';
 export const load: ServerLoad = async (event) => {
   const token = event.cookies.get("token");
   if (token) {
-    redirect(301, "/");
+    throw redirect(301, "/");
   }
 
   return {
@@ -62,6 +62,6 @@ export const actions: Actions = {
       httpOnly: true,
     });
 
-    redirect(303, "/me");
+    throw redirect(303, "/me");
 	}
 };

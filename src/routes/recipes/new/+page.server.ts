@@ -7,7 +7,7 @@ export const actions = {
   save: async ({ request, cookies, fetch }) => {
     const token = cookies.get('token');
     if (!token) {
-      redirect(303, '/auth/login');
+      throw redirect(303, '/auth/login');
     }
 
     const formData = await request.formData();
@@ -34,7 +34,7 @@ export const actions = {
 
     if (res.status === 401) {
       cookies.delete('token', { path: '/' });
-      redirect(303, '/auth/login'); 
+      throw redirect(303, '/auth/login'); 
     }
 
     if (!res.ok) {

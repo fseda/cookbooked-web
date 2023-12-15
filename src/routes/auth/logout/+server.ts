@@ -4,5 +4,5 @@ export const prerender = false;
 
 export const GET = async ({ cookies }) => {
   cookies.delete("token", { path: "/" });
-  redirect(303, "/auth/login");
+  throw redirect(303, "/auth/login");
 };
