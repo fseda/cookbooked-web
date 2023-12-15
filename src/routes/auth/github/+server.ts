@@ -9,7 +9,7 @@ export const prerender = false;
 export const GET = async ({ cookies, fetch, url }) => {
   const state = url.searchParams.get('state');
   const code = url.searchParams.get('code');
-  let authenticating = !!code;
+  let authenticating = !!code && !!state;
 
   const token = cookies.get('token');
   let authenticated = !!token;

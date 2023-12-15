@@ -6,14 +6,17 @@ COPY . .
 
 RUN bun install
 
-ENV VITE_API_URL https://cookbooked-api-deploy-170e.up.railway.app
-ENV VITE_GITHUB_CLIENT_ID 2818c47a84f8a51aa7e9
-ENV ORIGIN https://cookbooked-web-deploy.up.railway.app
+ARG VITE_API_URL
+ARG VITE_GITHUB_CLIENT_ID
+ARG ORIGIN
+
+ENV VITE_API_URL=${VITE_API_URL}  
+ENV VITE_GITHUB_CLIENT_ID=${VITE_GITHUB_CLIENT_ID}
+ENV ORIGIN=${ORIGIN}
 
 RUN bun run build
 
 EXPOSE 3000
-
 
 CMD ["bun", "./build/index.js"]
 
