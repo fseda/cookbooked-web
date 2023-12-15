@@ -7,6 +7,7 @@ COPY . .
 RUN bun install
 
 ENV VITE_API_URL https://cookbooked-api-deploy-170e.up.railway.app
+ENV VITE_GITHUB_CLIENT_ID 2818c47a84f8a51aa7e9
 ENV ORIGIN https://cookbooked-web-deploy.up.railway.app
 
 RUN bun run build
