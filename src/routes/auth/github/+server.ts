@@ -2,6 +2,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { v4 as uuidv4 } from 'uuid';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
+const CLIENT_ID = import.meta.env.VITE_GITHUB_CLIENT_ID;
 
 export const prerender = false;
 
@@ -45,13 +46,11 @@ export const GET = async ({ cookies, fetch, url }) => {
 }
 
 export const POST = ({ cookies }) => {
-  const client_id = import.meta.env.VITE_GITHUB_CLIENT_ID;
   const state = uuidv4();
   cookies.set('github_oauth_state', state, { path: '/auth' });
-  console.log('state', state);
 
   return new Response(JSON.stringify({
-    client_id,
+    client_id: CLIENT_ID,
     state,
   }))
 }
