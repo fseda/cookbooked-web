@@ -33,7 +33,7 @@ export const load = async ({ cookies, params, fetch }) => {
   });
 
   if (res.status === 401) {
-    /* @migration task: add path argument */ cookies.delete('token');
+    cookies.delete('token', { path: '/' });
     throw redirect(303, '/auth/login'); 
   }
 
@@ -85,7 +85,7 @@ export const actions = {
     });
 
     if (res.status === 401) {
-      /* @migration task: add path argument */ cookies.delete('token');
+      cookies.delete('token', { path: '/' });
       throw redirect(303, '/auth/login'); 
     }
 

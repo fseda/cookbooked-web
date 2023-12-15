@@ -16,7 +16,7 @@ export const GET = async ({ cookies, fetch, url }) => {
 
   if (!authenticated && authenticating) {
     const storesState = cookies.get('github_oauth_state');
-    cookies.delete('github_oauth_state');
+    cookies.delete('github_oauth_state', { path: '/auth' });
     if (storesState !== state) throw error(400, "Stored state doesn't match value returned from GitHub");
 
     const response = await fetch(VITE_API_URL + "/auth/github/login", {
