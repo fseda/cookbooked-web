@@ -33,13 +33,13 @@ export const load = async ({ cookies, params, fetch }) => {
   });
 
   if (res.status === 401) {
-    cookies.delete('token');
+    /* @migration task: add path argument */ cookies.delete('token');
     redirect(303, '/auth/login'); 
   }
 
   if (!res.ok) {
     const errorBody: ErrorBody = await res.json();
-    throw error(res.status, errorBody.message);
+    error(res.status, errorBody.message);
   }
 
   const resBody: ResponseBody = await res.json();
@@ -85,7 +85,7 @@ export const actions = {
     });
 
     if (res.status === 401) {
-      cookies.delete('token');
+      /* @migration task: add path argument */ cookies.delete('token');
       redirect(303, '/auth/login'); 
     }
 
@@ -119,7 +119,7 @@ export const actions = {
     });
 
     if (res.status === 401) {
-      cookies.delete('token');
+      cookies.delete('token', { path: '/' });
       redirect(303, '/auth/login'); 
     }
 

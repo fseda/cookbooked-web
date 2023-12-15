@@ -33,7 +33,7 @@ export const actions = {
     });
 
     if (res.status === 401) {
-      cookies.delete('token');
+      cookies.delete('token', { path: '/' });
       redirect(303, '/auth/login'); 
     }
 

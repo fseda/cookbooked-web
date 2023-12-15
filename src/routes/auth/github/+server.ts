@@ -4,7 +4,7 @@ const VITE_API_URL = import.meta.env.VITE_API_URL;
 
 export const prerender = false;
 
-export const GET = async ({ cookies, fetch, url }) => {
+export const GET = async ({ cookies, fetch, url }): Promise<void> => {
   const state = url.searchParams.get('state');
   const code = url.searchParams.get('code');
   let authenticating = !!code;
