@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { page } from '$app/stores';
+
 </script>
 
 <div>
-  <span>404 - Page not found</span>
+  <span>{$page.status} - {$page.error?.message}</span>
   <a href="/">Homepage</a>
 </div>
 
