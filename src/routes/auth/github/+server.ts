@@ -50,6 +50,7 @@ export const POST = ({ cookies }) => {
   cookies.set('github_oauth_state', state, { path: '/auth' });
 
   console.log('client_id', CLIENT_ID);
+  console.log('api url', VITE_API_URL);
 
   return new Response(JSON.stringify({
     client_id: CLIENT_ID,
