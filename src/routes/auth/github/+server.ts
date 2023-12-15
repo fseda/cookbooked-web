@@ -1,4 +1,4 @@
-import { error, redirect } from '@sveltejs/kit';
+import { error, redirect, type NumericRange } from '@sveltejs/kit';
 import { v4 as uuidv4 } from 'uuid';
 
 const VITE_API_URL = import.meta.env.VITE_API_URL;
@@ -17,7 +17,7 @@ export const GET = async ({ cookies, fetch, url }) => {
   if (!authenticated && authenticating) {
     const storesState = cookies.get('github_oauth_state');
     cookies.delete('github_oauth_state', { path: '/auth' });
-    if (storesState !== state) throw error(400, "Stored state doesn't match value returned from GitHub");
+    if (storesState !== state) error(400, "Stored state doesn't match value returned from GitHub");
 
     const response = await fetch(VITE_API_URL + "/auth/github/login", {
       method: "POST",
@@ -28,7 +28,8 @@ export const GET = async ({ cookies, fetch, url }) => {
     });
   
     if (!response.ok) {
-      throw error(response.status, "Failed to get GitHub access token");
+      const status = response.status as NumericRange<400, 599>;
+      error(status, "Failed to get GitHub access token");
     }
   
     const { token }: AccessTokenResponse = await response.json();
@@ -39,10 +40,10 @@ export const GET = async ({ cookies, fetch, url }) => {
   } 
 
   if (authenticated) {
-    throw redirect(303, '/');
+    redirect(303, '/');
   }
 
-  throw redirect(303, '/auth/login');
+  redirect(303, '/auth/login');
 }
 
 export const POST = ({ cookies }) => {

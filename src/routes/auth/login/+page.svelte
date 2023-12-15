@@ -96,7 +96,10 @@
 
       return async ({ result, update }) => {
         await update().finally(() => {
+          
+          // @ts-ignore
           const client_id = result.client_id;
+          // @ts-ignore
           const state = result.state;
 
           // githubLoading = false;
@@ -104,7 +107,7 @@
         });
       }
     }}>
-      <button type="submit" id="github-login" class="btn-social-login contrast" aria-busy={githubLoading}>
+      <button type="submit" id="github-login" class="btn-social-login contrast" aria-busy={githubLoading} disabled={githubLoading}>
         <GitHubLogo reversed/>
         <GitHubMark reversed/>
       </button>

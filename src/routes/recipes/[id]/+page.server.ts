@@ -23,7 +23,7 @@ export const load = async ({ cookies, params, fetch }) => {
   const token = cookies.get('token');
   if (!token) {
     const message = 'You must be authenticated to view this recipe.'
-    throw redirect(303, `/auth/login?redirect=/recipes/${params.id}&message=${message}`);
+    redirect(303, `/auth/login?redirect=/recipes/${params.id}&message=${message}`);
   }
 
   const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {
@@ -34,12 +34,12 @@ export const load = async ({ cookies, params, fetch }) => {
 
   if (res.status === 401) {
     cookies.delete('token', { path: '/' });
-    throw redirect(303, '/auth/login'); 
+    redirect(303, '/auth/login'); 
   }
 
   if (!res.ok) {
     const errorBody: ErrorBody = await res.json();
-    throw error(res.status, errorBody.message);
+    error(res.status, errorBody.message);
   }
 
   const resBody: ResponseBody = await res.json();
@@ -59,7 +59,7 @@ export const actions = {
   save: async ({ request, cookies, fetch, params }) => {
     const token = cookies.get('token');
     if (!token) {
-      throw redirect(303, '/auth/login');
+      redirect(303, '/auth/login');
     }
 
     const formData = await request.formData();
@@ -86,7 +86,7 @@ export const actions = {
 
     if (res.status === 401) {
       cookies.delete('token', { path: '/' });
-      throw redirect(303, '/auth/login'); 
+      redirect(303, '/auth/login'); 
     }
 
     if (!res.ok) {
@@ -108,7 +108,7 @@ export const actions = {
   delete: async ({ cookies, fetch, params }) => {
     const token = cookies.get('token');
     if (!token) {
-      throw redirect(303, '/auth/login');
+      redirect(303, '/auth/login');
     }
 
     const res = await fetch(`${VITE_API_URL}/recipes/${params.id}`, {
@@ -120,7 +120,7 @@ export const actions = {
 
     if (res.status === 401) {
       cookies.delete('token', { path: '/' });
-      throw redirect(303, '/auth/login'); 
+      redirect(303, '/auth/login'); 
     }
 
     if (!res.ok) {
@@ -130,6 +130,6 @@ export const actions = {
       })
     }
 
-    throw redirect(303, '/recipes');
+    redirect(303, '/recipes');
   }
 }
